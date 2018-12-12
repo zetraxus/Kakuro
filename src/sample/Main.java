@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import data_io.DataInput;
+
 public class Main extends Application {
 
     @Override
@@ -18,6 +20,9 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
+        DataInput di = new DataInput();
+        di.ReadBoard("examples/example.txt");
+        System.out.println(di.makeGameBoard().toString());
         launch(args);
     }
 }
