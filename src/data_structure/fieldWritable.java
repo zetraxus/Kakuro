@@ -27,8 +27,46 @@ public class fieldWritable {
         this.columnFieldInfo = columnFieldInfo;
     }
 
+    public void setValue(int value) {
+        for (int i = 0; i < OPTIONS; ++i) {
+            possibilities[i] = i == value - 1;
+        }
+
+        state = State.FILLED;
+        possibilitiesCount = 1;
+    }
+
     public void setPossibilities(boolean[] possibilities) {
         this.possibilities = possibilities;
+        possibilitiesCount = 0;
+        for (boolean i : possibilities) {
+            if (i) possibilitiesCount++;
+        }
+        if (possibilitiesCount == 1) state = State.FILLED;
+        if (possibilitiesCount == 0) state = State.UNFILLED;//TODO error
+    }
+
+    public int revokePossibility(int i) {
+        if (1 <= i && i <= 9 && possibilities[i - 1] == true) {
+            possibilities[i - 1] = false;
+            possibilitiesCount--;
+        }
+        if (possibilitiesCount == 1) {
+            //state = State.FILLED;
+        }
+        return getValue();
+    }
+
+    public int getValue() {
+        if (state == State.FILLED) {
+            int newValue = 0;
+            for (int j = 0; j < 9; ++j) {
+                if (possibilities[j] == true)
+                    newValue = j + 1;
+            }
+            return newValue;
+        }
+        return -1;
     }
 
     public void setState(State state) {
@@ -51,12 +89,12 @@ public class fieldWritable {
         return rowFieldInfo;
     }
 
-    public void changePossibility(byte indeks, boolean newValue){
+    public void changePossibility(byte index, boolean newValue) {
 
-        if(newValue != possibilities[indeks]) {
-            possibilities[indeks] = newValue;
+        if (newValue != possibilities[index]) {
+            possibilities[index] = newValue;
 
-            if(newValue == true)
+            if (newValue == true)
                 ++possibilitiesCount;
             else
                 --possibilitiesCount;
@@ -71,4 +109,19 @@ public class fieldWritable {
         FILLED,
         UNFILLED
     }
+
+    @Override
+    public String toString() {
+        String toReturn;
+        if (state == State.UNFILLED)
+            toReturn = "N";
+        else
+            toReturn = "Y";
+        for (boolean i : possibilities) {
+            if (i) toReturn = toReturn + "1";
+            else toReturn = toReturn + "0";
+        }
+        return "[" + toReturn + "]";
+    }
+
 }

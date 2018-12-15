@@ -30,11 +30,12 @@ public class field2D { // we need that class to gather information about rows an
         this.type = type;
     }
 
-    public field2D(){
+    public field2D() {
         this.type = Type.BLANK;
     }
 
-    public fieldWritable setAsWritable(){
+    public fieldWritable setAsWritable() {
+      
         if (this.type != Type.WRITABLE) {
             this.type = Type.WRITABLE;
             this.writable = new fieldWritable();
@@ -75,21 +76,18 @@ public class field2D { // we need that class to gather information about rows an
     }
 
     @Override
-    public String toString(){
-        if (this.type == Type.BLANK){
-            return "#";
-        }
-        else if (this.type == Type.WRITABLE){
-            return "_";
-        }
-        else if (this.type == Type.INFOCOLUMN){
-            return String.format("%d\\", this.column.getSum());
-        }
-        else if (this.type == Type.INFOCOLUMNANDROW){
-            return String.format("%d\\%d", this.column.getSum(), this.row.getSum());
-        }
-        else{
-            return String.format("\\%d", this.row.getSum());
+
+    public String toString() {
+        if (this.type == Type.BLANK) {
+            return "[##########]";
+        } else if (this.type == Type.WRITABLE) {
+            return writable.toString();
+        } else if (this.type == Type.INFOCOLUMN) {
+            return String.format("[%d\\#######]", this.column.getSum());
+        } else if (this.type == Type.INFOCOLUMNANDROW) {
+            return String.format("[%d\\%d####]", this.column.getSum(), this.row.getSum());
+        } else {
+            return String.format("[\\%d#######]", this.row.getSum());
         }
     }
 
