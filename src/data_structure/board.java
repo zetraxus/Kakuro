@@ -156,26 +156,6 @@ public class board {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        StringBuilder[] rowBuilders = new StringBuilder[this.height];
-        // Initialize all elements in this array
-        Arrays.setAll(rowBuilders, i -> new StringBuilder());
-
-        for (int i = 0; i < this.width; ++i) {
-            for (int j = 0; j < this.height; ++j) {
-                rowBuilders[j].append(this.gameBoard[i][j]);
-                rowBuilders[j].append(" ");
-            }
-        }
-        for (StringBuilder row : rowBuilders) {
-            builder.append(row.toString());
-            builder.append("\n");
-        }
-        return builder.toString();
-    }
-
-    @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
         StringBuilder[] rowBuilders = new StringBuilder[this.height];
