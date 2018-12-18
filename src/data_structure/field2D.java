@@ -7,35 +7,12 @@ public class field2D { // we need that class to gather information about rows an
     private fieldWritable writable;
     private Type type;
 
-    public field2D(fieldInfo fieldInfo, Type type) {
-        this.type = type;
-        if (type == Type.INFOCOLUMN)
-            column = fieldInfo;
-        else
-            row = fieldInfo;
-    }
-
-    public field2D(fieldInfo column, fieldInfo row) {
-        this.column = column;
-        this.row = row;
-        this.type = Type.INFOCOLUMNANDROW;
-    }
-
-    public field2D(fieldWritable writable) {
-        this.writable = writable;
-        this.type = Type.WRITABLE;
-    }
-
-    public field2D(Type type) {
-        this.type = type;
-    }
-
     public field2D() {
         this.type = Type.BLANK;
     }
 
     public fieldWritable setAsWritable() {
-      
+
         if (this.type != Type.WRITABLE) {
             this.type = Type.WRITABLE;
             this.writable = new fieldWritable();
@@ -47,18 +24,6 @@ public class field2D { // we need that class to gather information about rows an
         return column;
     }
 
-    public fieldInfo getRow() {
-        return row;
-    }
-
-    public fieldWritable getWritable() {
-        return writable;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
     public void setColumn(fieldInfo column) { // TODO: (kam193) Maybe we should raise exception, when operation is not permitted
         this.column = column;
         if (this.type == Type.BLANK)
@@ -67,12 +32,24 @@ public class field2D { // we need that class to gather information about rows an
             this.type = Type.INFOCOLUMNANDROW;
     }
 
+    public fieldInfo getRow() {
+        return row;
+    }
+
     public void setRow(fieldInfo row) {
         this.row = row;
         if (this.type == Type.BLANK)
             this.type = Type.INFOROW;
         else if (this.type == Type.INFOCOLUMN)
             this.type = Type.INFOCOLUMNANDROW;
+    }
+
+    public fieldWritable getWritable() {
+        return writable;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class DataInput {
+    final String rowSign = "R";
     private field2D[][] board;
     private int width;
     private int height;
@@ -119,6 +120,4 @@ public class DataInput {
         return possibilities;
 
     }
-
-    final String rowSign = "R";
 }

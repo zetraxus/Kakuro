@@ -1,11 +1,13 @@
 package solver;
 
 
+import data_io.DataInput;
 import data_structure.board;
 import data_structure.gameState;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Vector;
 
 public class solver {
 
@@ -17,57 +19,57 @@ public class solver {
     };
 
     private PriorityQueue<gameState> queue = new PriorityQueue<>(comparator);
+    private board template;
 
     public solver(board board, int initialValue) {
-        gameState initial = new gameState(board, initialValue);
+//        template = board;board.setField(4,1,9);
+        System.out.println("solver() board\n" + board.toString());
+        template = new board(board);
+        System.out.println("solver() template\n" + template.toString());
+//        template.setField(4,2,7);
+//        template.setField(1,4,2);
+//        template.setField(1,3,9);
+//        template.setField(2,4,1);
+//        template.setField(3,2,9);
+//        template.setField(2,2,8);
+//        template.setField(2,1,6);
+//        template.setField(3,1,8);
+//        template.setField(2,3,2);
+//        template.setField(3,3,7);
+        System.out.println("solver() after setfield template\n" + template.toString());
+        System.out.println("solver() after setfield board\n" + board.toString());
+        gameState initial = new gameState(template.generateShortcut(), initialValue, false);
+        System.out.println(template.generateShortcut());
         queue.add(initial);
     }
 
 
     public board solve() {
-        //TODO
+        DataInput di = new DataInput();
+//        di.ReadBoard("examples/board_6x6.txt");
+        di.ReadBoard("examples/example.txt");
 
-        gameState analyzed = queue.remove();
-        board board = analyzed.getBoard();
+        gameState analyzed = null;
+        board analyzedBoard = null;
 
-        //by commenting you can see how possibilities changes
-        //example.txt
-        /*board.setField(4,1,9);
-        board.setField(4,2,7);
-        board.setField(1,4,2);
-        board.setField(1,3,9);
-        board.setField(2,4,1);
-        board.setField(3,2,9);
-        board.setField(2,2,8);
-        board.setField(2,1,6);
-        board.setField(3,1,8);
-        board.setField(2,3,2);
-        board.setField(3,3,7);*/
 
-        //board_6x6.txt
-        board.setField(5, 2, 1);
-        board.setField(6, 1, 9);
-        board.setField(6, 2, 2);
-        board.setField(4, 2, 3);
-        board.setField(2, 1, 1);
-        board.setField(2, 6, 8);
-        board.setField(1, 6, 1);
-        board.setField(1, 5, 2);
-        board.setField(3, 5, 1);
-        board.setField(5, 6, 9);
-        board.setField(5, 5, 7);
-        board.setField(5, 4, 4);
-        board.setField(6, 5, 1);
-        board.setField(6, 4, 2);
-        board.setField(4, 4, 1);
-        board.setField(3, 4, 3);
-        board.setField(3, 3, 6);
-        board.setField(1, 2, 9);
-        board.setField(2, 2, 8);
-        board.setField(1, 3, 7);
-        board.setField(2, 3, 3);
-        board.setField(4, 3, 9);
+        tu:
+        while (queue.isEmpty() == false) {
+            if ((analyzed = queue.remove()).isSolved()) {
+                System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
+                System.out.println(new board(template).generate(analyzed.getBoardShortcut()));
+                break tu;
+            }
+            analyzedBoard = new board(template).generate(analyzed.getBoardShortcut());
 
-        return board;
+            Vector<gameState> newGeneratedStates = analyzedBoard.nextStep();
+            for (int i = 0; i < newGeneratedStates.size(); ++i) {
+                queue.add(newGeneratedStates.elementAt(i));
+                System.out.println("" + analyzed.isSolved() + " " + newGeneratedStates.elementAt(i).getBoardShortcut());
+            }
+
+        }
+
+        return analyzedBoard;
     }
 }
