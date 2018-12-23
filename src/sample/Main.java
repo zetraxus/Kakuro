@@ -9,20 +9,49 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import solver.solver;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 public class Main extends Application {
 
     public static void main(String[] args) {
+        String inputFile = "examples/example.in";
+        String outputFile = null;
+
+        if (args.length == 2){
+            inputFile = args[0];
+            outputFile = args[1];
+        }
+
         DataInput di = new DataInput();
 
-        di.ReadBoard("examples/example.txt");
+
+        di.ReadBoard(inputFile);
 //        di.ReadBoard("examples/board_6x6.txt");
 
         board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
         solver solver = new solver(template, template.getCost()); // TODO compute initial value
-        solver.solve();
+        board result = solver.solve();
+
+        if (outputFile != null)
+            writeResultToFile(result, outputFile);
+
+        System.exit(0);
 
 //        launch(args);
+    }
+
+    private static void writeResultToFile(board resultBoard, String outputFile){
+        try {
+            FileWriter fileWriter = new FileWriter(outputFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.println(resultBoard);
+            printWriter.close();
+        } catch (IOException e){
+            System.out.println("Error on save to file");
+        }
     }
 
     @Override

@@ -45,22 +45,22 @@ public class solver {
 
 
     public board solve() {
-        DataInput di = new DataInput();
+//        DataInput di = new DataInput();
 //        di.ReadBoard("examples/board_6x6.txt");
-        di.ReadBoard("examples/example.txt");
+//        di.ReadBoard("examples/example.txt");
 
         gameState analyzed = null;
         board analyzedBoard = null;
 
-
         tu:
         while (queue.isEmpty() == false) {
-            if ((analyzed = queue.remove()).isSolved()) {
+            analyzed = queue.remove();
+            analyzedBoard = new board(template).generate(analyzed.getBoardShortcut());
+            if (analyzed.isSolved()) {
                 System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
-                System.out.println(new board(template).generate(analyzed.getBoardShortcut()));
+                System.out.println(analyzedBoard);
                 break tu;
             }
-            analyzedBoard = new board(template).generate(analyzed.getBoardShortcut());
 
             Vector<gameState> newGeneratedStates = analyzedBoard.nextStep();
             for (int i = 0; i < newGeneratedStates.size(); ++i) {

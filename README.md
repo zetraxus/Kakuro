@@ -4,6 +4,12 @@ Application for playing and solving kakuro (A* algorithm).
 # Requirements
 Use `Java JDK 8`
 
+# Autotest
+Use `./autotest.sh` to run solve on examples and check if result is the same as expected.
+
+Examples are stored in `examples/`: script runs all with `.in` and check the result with 
+expected from `examples/outputs/`.
+
 # Input
 File format is:
 ```
@@ -32,3 +38,5 @@ For board:
 \18 _ _ _ # 
 \6 _ _ _ #
 ```
+
+You can run app with specified input and output file by passing them as arguments. 
