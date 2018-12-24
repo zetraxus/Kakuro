@@ -168,6 +168,20 @@ public class board {
         return shortcut;
     }
 
+    public boolean isPossibleToSolve(){
+        // check if in all row and column sum it's possible to set at least one combination of sums
+        // TODO: add except field with setted value
+        for (fieldInfo info : this.rowsInfo){
+            if (!info.isPossibleToSolve())
+                return false;
+        }
+        for (fieldInfo info : this.columnsInfo){
+            if (!info.isPossibleToSolve())
+                return false;
+        }
+        return true;
+    }
+
     private int checkIfSolved() {
 
         boolean isSolved = true;

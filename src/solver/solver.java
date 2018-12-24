@@ -51,11 +51,16 @@ public class solver {
 
         gameState analyzed = null;
         board analyzedBoard = null;
-
+        int countOfAnalyzed = 0;
         tu:
         while (queue.isEmpty() == false) {
+            ++countOfAnalyzed;
             analyzed = queue.remove();
             analyzedBoard = new board(template).generate(analyzed.getBoardShortcut());
+            if (!analyzedBoard.isPossibleToSolve()){
+                System.out.println("FALSE BOARD " + countOfAnalyzed);
+                continue;
+            }
             if (analyzed.isSolved()) {
                 System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
                 System.out.println(analyzedBoard);
@@ -69,6 +74,7 @@ public class solver {
             }
 
         }
+        System.out.println("Analyzed board: " + countOfAnalyzed);
 
         return analyzedBoard;
     }
