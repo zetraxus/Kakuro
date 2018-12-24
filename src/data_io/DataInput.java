@@ -33,6 +33,14 @@ public class DataInput {
         }
     }
 
+    public void readString(String input) {
+        String[] lines = input.split("\n");
+        for (String line : lines) {
+            this.analyzeRequirement(line);
+
+        }
+    }
+
     public board makeGameBoard() {
         if (board == null)
             return null;
