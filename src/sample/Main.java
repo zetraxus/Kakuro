@@ -1,13 +1,13 @@
 package sample;
 
 import data_io.DataInput;
-import data_structure.board;
+import data_structure.Board;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import solver.solver;
+import solver.Solver;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,37 +19,33 @@ public class Main extends Application {
         String inputFile = "examples/example.in";
         String outputFile = null;
 
-        if (args.length == 2){
+        if (args.length >= 1)
             inputFile = args[0];
+        if (args.length == 2)
             outputFile = args[1];
-        }
 
         DataInput di = new DataInput();
-
-
         di.ReadBoard(inputFile);
-//        di.ReadBoard("examples/board_6x6.txt");
 
-        board template = di.makeGameBoard();
+        Board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
-        solver solver = new solver(template, template.getCost()); // TODO compute initial value
-        board result = solver.solve();
+        Solver solver = new Solver(template, template.getCost()); // TODO compute initial value
+        Board result = solver.solve();
 
         if (outputFile != null)
             writeResultToFile(result, outputFile);
 
         System.exit(0);
-
 //        launch(args);
     }
 
-    private static void writeResultToFile(board resultBoard, String outputFile){
+    private static void writeResultToFile(Board resultBoard, String outputFile) {
         try {
             FileWriter fileWriter = new FileWriter(outputFile);
             PrintWriter printWriter = new PrintWriter(fileWriter);
             printWriter.println(resultBoard);
             printWriter.close();
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error on save to file");
         }
     }

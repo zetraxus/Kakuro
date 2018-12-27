@@ -9,7 +9,7 @@ public class PossiblesSumCombinations {
     private static Map<String, List<int[]>> possiblesSums = null;
     private static List<int[]> emptyList = new ArrayList<>();
 
-    public static List<int[]> getPossiblesSumsCombinations(int sum, int fieldsCount){
+    public static List<int[]> getPossiblesSumsCombinations(int sum, int fieldsCount) {
         if (possiblesSums == null)
             loadCombinationsFromFile("examples/sums.txt");
 
@@ -17,7 +17,19 @@ public class PossiblesSumCombinations {
         return Collections.unmodifiableList(possiblesSums.getOrDefault(key, emptyList));
     }
 
-    private static void loadCombinationsFromFile(String filename){
+    public static boolean[] getPossibilities(int sum, int fieldsCount) {
+        boolean[] possibilities = new boolean[9];
+
+        List<int[]> possibleCombinations = getPossiblesSumsCombinations(sum, fieldsCount);
+
+        for (int[] combination : possibleCombinations)
+            for (int digit : combination)
+                possibilities[digit - 1] = true;
+
+        return possibilities;
+    }
+
+    private static void loadCombinationsFromFile(String filename) {
         possiblesSums = new HashMap<>();
 
         try {
@@ -31,9 +43,9 @@ public class PossiblesSumCombinations {
                 splited_line = splited_line[1].split("-");
                 List<int[]> combinations = new ArrayList<>();
 
-                for (String combination : splited_line){
+                for (String combination : splited_line) {
                     int[] possibleSum = new int[combination.length()];
-                    for (int i = 0; i < combination.length(); ++i){
+                    for (int i = 0; i < combination.length(); ++i) {
                         possibleSum[i] = Character.getNumericValue(combination.charAt(i));
                     }
                     combinations.add(possibleSum);

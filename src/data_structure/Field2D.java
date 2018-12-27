@@ -1,30 +1,39 @@
 package data_structure;
 
-public class field2D { // we need that class to gather information about rows and column in one fieldWritable
+public class Field2D { // we need that class to gather information about rows and column in one FieldWritable
 
-    private fieldInfo column;
-    private fieldInfo row;
-    private fieldWritable writable;
+    private FieldInfo column;
+    private FieldInfo row;
+    private FieldWritable writable;
     private Type type;
 
-    public field2D() {
+    public Field2D() {
         this.type = Type.BLANK;
     }
 
-    public fieldWritable setAsWritable() {
+    public Field2D(Field2D oldField) {
+        type = oldField.type;
+        if (type == Type.WRITABLE)
+            writable = new FieldWritable(oldField.writable);
+        if (type == Type.INFOCOLUMN || type == Type.INFOCOLUMNANDROW)
+            column = new FieldInfo(oldField.column);
+        if (type == Type.INFOROW || type == Type.INFOCOLUMNANDROW)
+            row = new FieldInfo(oldField.row);
+    }
 
+    public FieldWritable setAsWritable() {
         if (this.type != Type.WRITABLE) {
             this.type = Type.WRITABLE;
-            this.writable = new fieldWritable();
+            this.writable = new FieldWritable();
         }
         return this.writable;
     }
 
-    public fieldInfo getColumn() {
+    public FieldInfo getColumn() {
         return column;
     }
 
-    public void setColumn(fieldInfo column) { // TODO: (kam193) Maybe we should raise exception, when operation is not permitted
+    public void setColumn(FieldInfo column) { // TODO: (kam193) Maybe we should raise exception, when operation is not permitted
         this.column = column;
         if (this.type == Type.BLANK)
             this.type = Type.INFOCOLUMN;
@@ -32,11 +41,11 @@ public class field2D { // we need that class to gather information about rows an
             this.type = Type.INFOCOLUMNANDROW;
     }
 
-    public fieldInfo getRow() {
+    public FieldInfo getRow() {
         return row;
     }
 
-    public void setRow(fieldInfo row) {
+    public void setRow(FieldInfo row) {
         this.row = row;
         if (this.type == Type.BLANK)
             this.type = Type.INFOROW;
@@ -44,7 +53,7 @@ public class field2D { // we need that class to gather information about rows an
             this.type = Type.INFOCOLUMNANDROW;
     }
 
-    public fieldWritable getWritable() {
+    public FieldWritable getWritable() {
         return writable;
     }
 
@@ -53,7 +62,6 @@ public class field2D { // we need that class to gather information about rows an
     }
 
     @Override
-
     public String toString() {
         if (this.type == Type.BLANK) {
             return "[##########]";
@@ -69,7 +77,7 @@ public class field2D { // we need that class to gather information about rows an
     }
 
     enum Type {
-        WRITABLE, // fieldWritable which should be filled
+        WRITABLE, // FieldWritable which should be filled
         INFOCOLUMN, // info about column, row is null
         INFOROW, // info about row, column is null
         INFOCOLUMNANDROW, // info about column and row

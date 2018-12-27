@@ -1,22 +1,33 @@
 package data_structure;
 
-public class fieldWritable {
+public class FieldWritable {
 
     final int OPTIONS = 9; // 1,2,3,...,9
+    int storedValue = -1;
 
     private boolean[] possibilities;
     private byte possibilitiesCount;
     private State state;
-    private fieldInfo rowFieldInfo;
-    private fieldInfo columnFieldInfo;
+    private FieldInfo rowFieldInfo;
+    private FieldInfo columnFieldInfo;
 
-    public fieldWritable() {
-
+    public FieldWritable() {
         possibilities = new boolean[OPTIONS];
         for (int i = 0; i < OPTIONS; ++i)
-            possibilities[i] = true; // all options (1-9) are possible on every fieldWritable at start game
+            possibilities[i] = true; // all options (1-9) are possible on every FieldWritable at start game
         possibilitiesCount = OPTIONS; // options (1-9) are available
         state = State.UNFILLED;
+    }
+
+    public FieldWritable(FieldWritable oldField) {
+        possibilities = new boolean[OPTIONS];
+        possibilitiesCount = oldField.getPossibilitiesCount();
+        for (int i = 0; i < OPTIONS; ++i) {
+            possibilities[i] = oldField.getPossibility(i);
+        }
+        state = oldField.getState();
+        rowFieldInfo = oldField.getRowFieldInfo();
+        columnFieldInfo = oldField.getColumnFieldInfo();
     }
 
     public void revokePossibility(int i) {
@@ -24,18 +35,13 @@ public class fieldWritable {
             possibilities[i - 1] = false;
             possibilitiesCount--;
         }
-        //if(possibilitiesCount==1)state=State.FILLED;
     }
 
     public int getValue() {
         if (state == State.FILLED) {
-            int newValue = 0;
-            for (int j = 0; j < 9; ++j) {
-                if (possibilities[j] == true) {
-                    newValue = j + 1;
-                    return newValue;
-                }
-            }
+            if (storedValue == -1)
+                updateStoredValue();
+            return storedValue;
         }
         return -1;
     }
@@ -47,7 +53,16 @@ public class fieldWritable {
         possibilities[value - 1] = true;
 
         state = State.FILLED;
+        storedValue = value;
         possibilitiesCount = 1;
+    }
+
+    private void updateStoredValue() {
+        for (int j = 0; j < 9; ++j) {
+            if (possibilities[j] == true) {
+                storedValue = j + 1;
+            }
+        }
     }
 
     public boolean[] getPossibilities() {
@@ -55,16 +70,15 @@ public class fieldWritable {
     }
 
     public void setPossibilities(boolean[] inPossibilities) {
-        possibilities = new boolean[OPTIONS];
         possibilitiesCount = 0;
         for (int j = 0; j < 9; ++j) {
             possibilities[j] = inPossibilities[j];
-        }
-        for (boolean i : possibilities) {
-            if (i) possibilitiesCount++;
+            if (possibilities[j])
+                possibilitiesCount++;
         }
         if (possibilitiesCount == 1) state = State.FILLED;
         if (possibilitiesCount == 0) state = State.UNFILLED;//TODO error
+        storedValue = -1;
     }
 
     public boolean getPossibility(int index) {
@@ -75,19 +89,19 @@ public class fieldWritable {
         return possibilitiesCount;
     }
 
-    public fieldInfo getRowFieldInfo() {
+    public FieldInfo getRowFieldInfo() {
         return rowFieldInfo;
     }
 
-    public void setRowFieldInfo(fieldInfo rowFieldInfo) {
+    public void setRowFieldInfo(FieldInfo rowFieldInfo) {
         this.rowFieldInfo = rowFieldInfo;
     }
 
-    public fieldInfo getColumnFieldInfo() {
+    public FieldInfo getColumnFieldInfo() {
         return columnFieldInfo;
     }
 
-    public void setColumnFieldInfo(fieldInfo columnFieldInfo) {
+    public void setColumnFieldInfo(FieldInfo columnFieldInfo) {
         this.columnFieldInfo = columnFieldInfo;
     }
 
@@ -111,12 +125,11 @@ public class fieldWritable {
 
     public void setState(State state) {
         this.state = state;
+        storedValue = -1;
     }
 
     enum State {
         FILLED,
         UNFILLED
     }
-
-
 }

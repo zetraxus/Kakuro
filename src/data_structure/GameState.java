@@ -1,11 +1,11 @@
 package data_structure;
 
-public class gameState {
+public class GameState {
     boolean isSolved;
     private String boardShortcut;
     private int heuristicValue;
 
-    public gameState(String boardShortcut, int heuristicValue, boolean isSolved) {
+    public GameState(String boardShortcut, int heuristicValue, boolean isSolved) {
         this.heuristicValue = heuristicValue;
         this.boardShortcut = boardShortcut;
         this.isSolved = isSolved;
