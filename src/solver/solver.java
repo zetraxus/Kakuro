@@ -10,6 +10,7 @@ import java.util.PriorityQueue;
 import java.util.Vector;
 
 public class Solver {
+    
 
     Comparator<gameState> comparator = new Comparator<gameState>() {
         @Override
