@@ -1,21 +1,24 @@
 package generator;
 
+import java.lang.reflect.Field;
 import java.util.Random;
 
-public class boardGenerator {
+public class BoardGenerator {
+    private final int BLANK = 0;
+    private final int FILLED = -1;
     private int[][] board;
     private int size;
 
-    public boardGenerator(int size) {
+    public BoardGenerator(int size) {
         size--;
-        if (size < 3) {
-            this.size = 3;
+        if (size < 2) {
+            this.size = 2;
         } else {
             this.size = size;
         }
-        board = new int[size][size];
+        board = new int[this.size][this.size];
         generate();
-        while (checkReq())// hehe, yeah, generate 'til...
+        while (checkBlankFieldsSpaceReq())
             generate();
         while (!setValues())
             resetBoard();
@@ -23,7 +26,7 @@ public class boardGenerator {
         System.out.println(toString());
     }
 
-    //this generator could generate board with two fields that don't have routes to one another
+    //this generator could generate board with two fields that don't have paths to one another
 
     private void generate() {
         Random rand = new Random();
@@ -32,7 +35,7 @@ public class boardGenerator {
             for (int j = 0; j != size; ++j) {
                 if ((n = rand.nextInt(2)) == 0)
                     n = rand.nextInt(2);
-                board[i][j] = 0 - n;
+                board[i][j] = 0 - n;//75% chance of FILLED, 25% chance of BLANK
             }
         }
 
@@ -41,13 +44,13 @@ public class boardGenerator {
             for (int i = 0; i != size; ++i) {
                 length = 0;
                 for (int j = 0; j != size; ++j) {
-                    if (board[i][j] == -1) {
+                    if (board[i][j] == FILLED) {
                         ++length;
                     } else {
                         length = 0;
                     }
                     if (length > 9) {
-                        board[i][j] = 0;
+                        board[i][j] = BLANK;
                         length = 0;
                     }
                 }
@@ -56,13 +59,13 @@ public class boardGenerator {
             for (int i = 0; i != size; ++i) {
                 length = 0;
                 for (int j = 0; j != size; ++j) {
-                    if (board[j][i] == -1) {
+                    if (board[j][i] == FILLED) {
                         ++length;
                     } else {
                         length = 0;
                     }
                     if (length > 9) {
-                        board[j][i] = 0;
+                        board[j][i] = BLANK;
                         length = 0;
                     }
                 }
@@ -76,15 +79,12 @@ public class boardGenerator {
             isChanged = false;
             for (int i = 0; i != size; ++i) {
                 for (int j = 0; j != size; ++j) {
-                    if (board[i][j] == -1) {
-                        if ((i == 0 || board[i - 1][j] != -1) && (i == size - 1 || board[i + 1][j] != -1)) {
-                            board[i][j] = 0;
+                    if (board[i][j] == FILLED) {
+                        if ((i == 0 || board[i - 1][j] != FILLED) && (i == size - 1 || board[i + 1][j] != FILLED)) {
+                            board[i][j] = BLANK;
                             isChanged = true;
-                        }
-                    }
-                    if (board[i][j] == -1) {
-                        if ((j == 0 || board[i][j - 1] != -1) && (j == size - 1 || board[i][j + 1] != -1)) {
-                            board[i][j] = 0;
+                        } else if ((j == 0 || board[i][j - 1] != FILLED) && (j == size - 1 || board[i][j + 1] != FILLED)) {
+                            board[i][j] = BLANK;
                             isChanged = true;
                         }
                     }
@@ -94,14 +94,14 @@ public class boardGenerator {
 
     }
 
-    private boolean checkReq() {
+    private boolean checkBlankFieldsSpaceReq() {
         int n = 0;
         for (int i = 0; i != size; ++i) {
             for (int j = 0; j != size; ++j) {
-                if (board[i][j] == -1) n++;
+                if (board[i][j] == FILLED) n++;
             }
         }
-        return n <= size * size * 3 / 4;
+        return n <= size * size * 5 / 8;
     }
 
     private boolean setValues() {
@@ -171,7 +171,8 @@ public class boardGenerator {
     }
 
     public String toString() {
-        String toReturn = (size + 1) + " " + (size + 1) + "\n";
+        StringBuilder toReturn = new StringBuilder();
+        toReturn.append(size + 1).append(" ").append(size + 1).append("\n");
         int length;
         int sum;
         int start;
@@ -190,7 +191,7 @@ public class boardGenerator {
                     length++;
                     sum += board[i][end];
                     if (end + 1 == size || board[i][end + 1] == 0) {
-                        toReturn = toReturn + "R " + (start + 1) + " " + (i + 1) + " " + sum + " " + length + "\n";
+                        toReturn.append("R ").append(start + 1).append(" ").append(i + 1).append(" ").append(sum).append(" ").append(length).append("\n");
                     }
                 }
                 end++;
@@ -211,12 +212,12 @@ public class boardGenerator {
                     length++;
                     sum += board[end][i];
                     if (end + 1 == size || board[end + 1][i] == 0) {
-                        toReturn = toReturn + "C " + (i + 1) + " " + (start + 1) + " " + sum + " " + length + "\n";
+                        toReturn.append("C ").append(i + 1).append(" ").append(start + 1).append(" ").append(sum).append(" ").append(length).append("\n");
                     }
                 }
                 end++;
             }
         }
-        return toReturn;
+        return toReturn.toString();
     }
 }

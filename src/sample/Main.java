@@ -2,7 +2,7 @@ package sample;
 
 import data_io.DataInput;
 import data_structure.board;
-import generator.boardGenerator;
+import generator.BoardGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        boardGenerator i = new boardGenerator(18);
+        BoardGenerator i = new BoardGenerator(30);
 
         String inputFile = "examples/example.in";
         String outputFile = null;
