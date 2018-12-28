@@ -8,6 +8,7 @@ import data_structure.FieldInfo;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class DataInput {
@@ -32,7 +33,16 @@ public class DataInput {
         }
     }
 
-    public Board makeGameBoard() {
+    public void readString(String input) {
+        String[] lines = input.split("\n");
+        this.prepareBoard(lines[0]);
+        lines = Arrays.copyOfRange(lines, 1, lines.length);
+        for (String line : lines) {
+            this.analyzeRequirement(line);
+        }
+    }
+
+    public board makeGameBoard() {
         if (board == null)
             return null;
         return new Board((byte) this.width, (byte) this.height, this.board);
