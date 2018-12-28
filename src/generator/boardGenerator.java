@@ -8,18 +8,16 @@ public class boardGenerator {
 
     public boardGenerator(int size) {
         size--;
-        if(size < 3){
-            this.size=3;
-        }
-        if (size > 9)//TODO large maps, they are tricky, because maximum of line length=9
-            this.size = 9;
-        else
+        if (size < 3) {
+            this.size = 3;
+        } else {
             this.size = size;
+        }
         board = new int[size][size];
         generate();
         while (checkReq())// hehe, yeah, generate 'til...
             generate();
-        while(!setValues())
+        while (!setValues())
             resetBoard();
         show();
         System.out.println(toString());
@@ -37,6 +35,42 @@ public class boardGenerator {
                 board[i][j] = 0 - n;
             }
         }
+
+        if (size > 9) {
+            int length;
+            for (int i = 0; i != size; ++i) {
+                length = 0;
+                for (int j = 0; j != size; ++j) {
+                    if (board[i][j] == -1) {
+                        ++length;
+                    } else {
+                        length = 0;
+                    }
+                    if (length > 9) {
+                        board[i][j] = 0;
+                        length = 0;
+                    }
+                }
+
+            }
+            for (int i = 0; i != size; ++i) {
+                length = 0;
+                for (int j = 0; j != size; ++j) {
+                    if (board[j][i] == -1) {
+                        ++length;
+                    } else {
+                        length = 0;
+                    }
+                    if (length > 9) {
+                        board[j][i] = 0;
+                        length = 0;
+                    }
+                }
+
+            }
+        }
+
+
         boolean isChanged = true;
         while (isChanged) {
             isChanged = false;
@@ -73,8 +107,8 @@ public class boardGenerator {
     private boolean setValues() {
         int temp;
         boolean[] possibilities = new boolean[9];
-        for(int k=0;k!=9;++k){
-            possibilities[k]=true;
+        for (int k = 0; k != 9; ++k) {
+            possibilities[k] = true;
         }
         Random rand = new Random();
         for (int i = 0; i != size; ++i) {
@@ -83,15 +117,15 @@ public class boardGenerator {
                     temp = rand.nextInt(9) + 1;
                     board[i][j] = temp;
                     while (checkNumber(i, j, temp)) {
-                        possibilities[temp-1]=false;
-                        if(!possibilities[0]&&!possibilities[1]&&!possibilities[2]&&!possibilities[3]&&!possibilities[4]&&!possibilities[5]&&!possibilities[6]&&!possibilities[7]&&!possibilities[8]){
+                        possibilities[temp - 1] = false;
+                        if (!possibilities[0] && !possibilities[1] && !possibilities[2] && !possibilities[3] && !possibilities[4] && !possibilities[5] && !possibilities[6] && !possibilities[7] && !possibilities[8]) {
                             return false;
                         }
                         temp = rand.nextInt(9) + 1;
                         board[i][j] = temp;
                     }
-                    for(int k=0;k!=9;++k){
-                        possibilities[k]=true;
+                    for (int k = 0; k != 9; ++k) {
+                        possibilities[k] = true;
                     }
                 }
             }

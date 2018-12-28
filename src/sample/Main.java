@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        boardGenerator i = new boardGenerator(10);
+        boardGenerator i = new boardGenerator(18);
 
         String inputFile = "examples/example.in";
         String outputFile = null;
