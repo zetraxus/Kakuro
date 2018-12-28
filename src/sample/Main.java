@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import solver.solver;
+import solver.Solver;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,8 +35,8 @@ public class Main extends Application {
 
         board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
-        solver solver = new solver(template, template.getCost()); // TODO compute initial value
-        //board result = solver.solve();
+        Solver solver = new Solver(template, template.getCost()); // TODO compute initial value
+        //board result = Solver.solve();
 
 //        if (outputFile != null)
 //            writeResultToFile(result, outputFile);
