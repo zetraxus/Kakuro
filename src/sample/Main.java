@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        boardGenerator i = new boardGenerator(4);
+        boardGenerator i = new boardGenerator(10);
 
         String inputFile = "examples/example.in";
         String outputFile = null;
@@ -36,7 +36,7 @@ public class Main extends Application {
         board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
         solver solver = new solver(template, template.getCost()); // TODO compute initial value
-        board result = solver.solve();
+        //board result = solver.solve();
 
 //        if (outputFile != null)
 //            writeResultToFile(result, outputFile);

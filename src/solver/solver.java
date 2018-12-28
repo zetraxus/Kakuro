@@ -23,9 +23,9 @@ public class solver {
 
     public solver(board board, int initialValue) {
 //        template = board;board.setField(4,1,9);
-        System.out.println("solver() board\n" + board.toString());
+//        System.out.println("solver() board\n" + board.toString());
         template = new board(board);
-        System.out.println("solver() template\n" + template.toString());
+//        System.out.println("solver() template\n" + template.toString());
 //        template.setField(4,2,7);
 //        template.setField(1,4,2);
 //        template.setField(1,3,9);
@@ -36,8 +36,8 @@ public class solver {
 //        template.setField(3,1,8);
 //        template.setField(2,3,2);
 //        template.setField(3,3,7);
-        System.out.println("solver() after setfield template\n" + template.toString());
-        System.out.println("solver() after setfield board\n" + board.toString());
+//        System.out.println("solver() after setfield template\n" + template.toString());
+//        System.out.println("solver() after setfield board\n" + board.toString());
         gameState initial = new gameState(template.generateShortcut(), initialValue, false);
         System.out.println(template.generateShortcut());
         queue.add(initial);

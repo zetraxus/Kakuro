@@ -7,6 +7,10 @@ public class boardGenerator {
     private int size;
 
     public boardGenerator(int size) {
+        size--;
+        if(size < 3){
+            this.size=3;
+        }
         if (size > 9)//TODO large maps, they are tricky, because maximum of line length=9
             this.size = 9;
         else
@@ -15,12 +19,13 @@ public class boardGenerator {
         generate();
         while (checkReq())// hehe, yeah, generate 'til...
             generate();
-        setValues();
+        while(!setValues())
+            resetBoard();
         show();
         System.out.println(toString());
     }
 
-    //TODO this generator could generate board with two fields that don't have routes to one another
+    //this generator could generate board with two fields that don't have routes to one another
 
     private void generate() {
         Random rand = new Random();
@@ -65,8 +70,12 @@ public class boardGenerator {
         return n <= size * size * 3 / 4;
     }
 
-    private void setValues() {
+    private boolean setValues() {
         int temp;
+        boolean[] possibilities = new boolean[9];
+        for(int k=0;k!=9;++k){
+            possibilities[k]=true;
+        }
         Random rand = new Random();
         for (int i = 0; i != size; ++i) {
             for (int j = 0; j != size; ++j) {
@@ -74,17 +83,21 @@ public class boardGenerator {
                     temp = rand.nextInt(9) + 1;
                     board[i][j] = temp;
                     while (checkNumber(i, j, temp)) {
+                        possibilities[temp-1]=false;
+                        if(!possibilities[0]&&!possibilities[1]&&!possibilities[2]&&!possibilities[3]&&!possibilities[4]&&!possibilities[5]&&!possibilities[6]&&!possibilities[7]&&!possibilities[8]){
+                            return false;
+                        }
                         temp = rand.nextInt(9) + 1;
                         board[i][j] = temp;
+                    }
+                    for(int k=0;k!=9;++k){
+                        possibilities[k]=true;
                     }
                 }
             }
         }
 
-        if (false) {//TODO use this sometimes, it's important :)
-            resetBoard();
-            setValues();
-        }
+        return true;
     }
 
     private boolean checkNumber(int x, int y, int value) {//function used by setValues
@@ -143,7 +156,7 @@ public class boardGenerator {
                     length++;
                     sum += board[i][end];
                     if (end + 1 == size || board[i][end + 1] == 0) {
-                        toReturn = toReturn + "R " + i + " " + (start + 1) + " " + sum + " " + length + "\n";
+                        toReturn = toReturn + "R " + (start + 1) + " " + (i + 1) + " " + sum + " " + length + "\n";
                     }
                 }
                 end++;
@@ -164,7 +177,7 @@ public class boardGenerator {
                     length++;
                     sum += board[end][i];
                     if (end + 1 == size || board[end + 1][i] == 0) {
-                        toReturn = toReturn + "C " + (start + 1) + " " + i + " " + sum + " " + length + "\n";
+                        toReturn = toReturn + "C " + (i + 1) + " " + (start + 1) + " " + sum + " " + length + "\n";
                     }
                 }
                 end++;
