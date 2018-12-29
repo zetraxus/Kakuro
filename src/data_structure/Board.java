@@ -8,7 +8,10 @@ import java.util.Vector;
 
 
 public class Board {
-    final int ASCIZEROCODE = 48;
+    private final int SOLVED = 1;
+    private final int POSSIBLETOSOLVE = 0;
+    private final int IMPOSSIBLETOSOLVE = -1;
+    private final int ASCIZEROCODE = 48;
     private byte width;
     private byte height;
 
@@ -21,10 +24,8 @@ public class Board {
         this.height = height;
         fillGameBoard(startBoard);
 
-        setPossibilities();
-        while (findNewFilled()) {
-            setPossibilities();
-        }
+        setPossibilitiesBasedOnTemplate();
+        setPossibilitiesBasedOnFilledField();
     }
 
     public Board(Board oldBoard) {
@@ -33,19 +34,9 @@ public class Board {
         fillGameBoard(oldBoard.gameBoard);
     }
 
-    public Board(Board oldBoard, String shortcut) {
-        width = oldBoard.width;
-        height = oldBoard.height;
-        fillGameBoard(oldBoard.gameBoard);
-        fillValuesFromShortcut(shortcut);
-    }
-
     public void setField(int x, int y, int value) {
         gameBoard[x][y].getWritable().setValue(value);
-        setPossibilities();
-        while (findNewFilled()) {
-            setPossibilities();
-        }
+        updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
     }
 
     private void fillGameBoard(Field2D[][] initialBoard) {
@@ -84,34 +75,6 @@ public class Board {
         }
     }
 
-    private boolean findNewFilled() {
-        boolean found = false;
-        for (FieldInfo column : columnsInfo) {
-            for (FieldWritable writable : column.getFields()) {
-                if (writable.getState() == FieldWritable.State.UNFILLED && writable.getPossibilitiesCount() == 1) {
-                    writable.setState(FieldWritable.State.FILLED);
-                    found = true;
-                }
-            }
-        }
-        return found;
-    }
-
-    private void fillValuesFromShortcut(String shortcut) {
-        int indexInShortcut = 0;
-
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
-                    if (shortcut.charAt(indexInShortcut) != ASCIZEROCODE)
-                        this.setField(j, i, (int) shortcut.charAt(indexInShortcut) - ASCIZEROCODE);
-                    ++indexInShortcut;
-                }
-            }
-        }
-        //setPossibilities(); // TODO: is this needed or not?
-    }
-
     public String generateShortcut() {
         StringBuilder shortcut = new StringBuilder();
 
@@ -124,6 +87,17 @@ public class Board {
                         shortcut.append(0);
                 }
         }
+
+//        for (FieldInfo fieldInfo: columnsInfo){
+//            for (FieldWritable fieldWritable : fieldInfo.getFields()){
+//                if(fieldWritable.getState() == FieldWritable.State.FILLED)
+//                    shortcut.append(fieldWritable.getValue());
+//                else
+//                    shortcut.append(0);
+//            }
+//        }
+
+
         return shortcut.toString();
     }
 
@@ -140,37 +114,6 @@ public class Board {
         return true;
     }
 
-    private int checkIfSolved() {
-        int solvingStatus = isPossibleOrSolved();
-
-        if (solvingStatus < 0)
-            return -1;
-        if (solvingStatus == 1) {
-            if (!areSumsSolved(columnsInfo) || !areSumsSolved(rowsInfo))
-                return -1;
-            return 1;
-        }
-        return 0;
-    }
-
-    private int isPossibleOrSolved() {
-        boolean isSolved = true;
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                if (gameBoard[x][y].getType() == Field2D.Type.WRITABLE) {
-                    if (gameBoard[x][y].getWritable().getState() == FieldWritable.State.UNFILLED) {
-                        isSolved = false;
-                        if (gameBoard[x][y].getWritable().getPossibilitiesCount() == 0)
-                            return -1; // it's impossible to solve Kakuro in this board situation
-                    }
-                }
-            }
-        }
-        if (isSolved)
-            return 1;
-        return 0;
-    }
-
     private boolean areSumsSolved(Vector<FieldInfo> infoFields) {
         for (FieldInfo info : infoFields) {
             int sum = info.getFields().stream().mapToInt(e -> e.getValue()).sum();
@@ -180,17 +123,43 @@ public class Board {
         return true;
     }
 
-    public Vector<GameState> nextStep() { // I haven't tested this function yet, so use it carefully, or test it.
+    private int checkIfSolved() {
+        if(!isPossibleToSolve())
+            return IMPOSSIBLETOSOLVE;
+        if (!areSumsSolved(columnsInfo) || !areSumsSolved(rowsInfo))
+            return POSSIBLETOSOLVE;
+        return SOLVED;
+    }
+
+    public Vector<GameState> nextStep() {
         Vector<GameState> newStates = new Vector<>();
 
         StringBuilder shortcut = new StringBuilder(this.generateShortcut());
         int shortcutPosition = 0;
-
-        int solvingStatus = isPossibleOrSolved();
-        if (solvingStatus < 0)
-            return newStates;//to sie nigdy nie powinno stac moim zdaniem, Łukasz
-
         Board temp;
+
+//        for (FieldInfo fieldInfo: columnsInfo){ // it doesnt work, you can try to fix it + generate shortcut
+//            for (FieldWritable fieldWritable : fieldInfo.getFields()){
+//                if(fieldWritable.getState() == FieldWritable.State.UNFILLED){
+//                    boolean[] possibilities = fieldWritable.getPossibilities();
+//                    for(int i = 0 ; i < 9; ++i){
+//                        if(possibilities[i]){
+//                            int value = 0;//this.getCost() - getCostIfSetField(gameBoard[j][i].getWritable(), k) - 1; // current cost - 1 possibility less in every field in row and column - this field which is set
+//                            temp = new Board(this);
+//                            temp.columnsInfo.elementAt(columnsInfo.indexOf(fieldInfo)).getFields().elementAt(fieldInfo.getFields().indexOf(fieldWritable)).setValue(i+1);
+//                            int checkIfSolved = temp.checkIfSolved();
+//                            if (checkIfSolved != IMPOSSIBLETOSOLVE) {
+//                                String newShortcut = getChangedShortcut(shortcut, shortcutPosition, i + 1);
+//                                GameState newGameState = new GameState(newShortcut, value, checkIfSolved == SOLVED, temp);
+//                                newStates.add(newGameState);
+//                            }
+//                        }
+//                    }
+//                }
+//                ++shortcutPosition;
+//            }
+//        }
+
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
@@ -201,10 +170,10 @@ public class Board {
                                 int value = 0;//this.getCost() - getCostIfSetField(gameBoard[j][i].getWritable(), k) - 1; // current cost - 1 possibility less in every field in row and column - this field which is set
                                 temp = new Board(this);
                                 temp.setField(j, i, k + 1);
-
-                                if (temp.checkIfSolved() >= 0) {
+                                int checkIfSolved = temp.checkIfSolved();
+                                if (checkIfSolved != IMPOSSIBLETOSOLVE) {
                                     String newShortcut = getChangedShortcut(shortcut, shortcutPosition, k + 1);
-                                    GameState newGameState = new GameState(newShortcut, value, temp.checkIfSolved() > 0);
+                                    GameState newGameState = new GameState(newShortcut, value, checkIfSolved == SOLVED, temp);
                                     newStates.add(newGameState);
                                 }
                             }
@@ -249,19 +218,19 @@ public class Board {
     public int getCost() {
         int cost = 0;
 
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
-                    if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.UNFILLED) {
-                        cost += gameBoard[j][i].getWritable().getPossibilitiesCount();
-                    }
-                }
-            }
-        }
+//        for (int i = 0; i < height; ++i) {
+//            for (int j = 0; j < width; ++j) {
+//                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
+//                    if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.UNFILLED) {
+//                        cost += gameBoard[j][i].getWritable().getPossibilitiesCount();
+//                    }
+//                }
+//            }
+//        }
         return cost;
     }
 
-    private void setPossibilities() {
+    private void setPossibilitiesBasedOnTemplate() {
         boolean[] possibilitiesRow;
         boolean[] possibilities;
         boolean[] crossPossibilities = new boolean[9];
@@ -275,7 +244,7 @@ public class Board {
 
             possibilities = PossiblesSumCombinations.getPossibilities(column.getSum(), column.getFieldCount());
             for (FieldWritable j : column.getFields()) {
-                if (j.getState() != FieldWritable.State.FILLED)
+                if (j.getState() == FieldWritable.State.UNFILLED)
                     j.setPossibilities(possibilities);
             }
         }
@@ -283,7 +252,7 @@ public class Board {
         for (FieldInfo row : rowsInfo) {
             possibilities = PossiblesSumCombinations.getPossibilities(row.getSum(), row.getFieldCount());
             for (FieldWritable writable : row.getFields()) {
-                if (writable.getState() != FieldWritable.State.FILLED) {
+                if (writable.getState() == FieldWritable.State.UNFILLED) {
                     possibilitiesRow = writable.getPossibilities();
                     for (int k = 0; k < 9; ++k)
                         crossPossibilities[k] = possibilities[k] & possibilitiesRow[k];
@@ -291,27 +260,33 @@ public class Board {
                 }
             }
         }
+    }
 
-//      this should consider filled fields influence
-//      and should not fill fields
+    private void setPossibilitiesBasedOnFilledField(){
         for (FieldInfo column : columnsInfo) {
             for (FieldWritable writable : column.getFields()) {
-                if (writable.getState() == FieldWritable.State.UNFILLED) {
-                    updatePossibilitiesByFilledFields(column.getX(), writable.getRowFieldInfo().getY());
+                if (writable.getState() == FieldWritable.State.FILLED) {
+                    updatePossibilitiesByFilledFields(writable);
                 }
             }
         }
     }
 
-    private void updatePossibilitiesByFilledFields(int x, int y) {
-        for (FieldWritable fieldInColumn : gameBoard[x][y].getWritable().getColumnFieldInfo().getFields()) {
-            if (fieldInColumn != gameBoard[x][y].getWritable() && fieldInColumn.getState() == FieldWritable.State.FILLED) {
-                gameBoard[x][y].getWritable().revokePossibility(fieldInColumn.getValue());
-            }
+    private void updatePossibilitiesByFilledFields(FieldWritable writable) {
+        for (FieldWritable fieldInColumn : writable.getColumnFieldInfo().getFields()) {
+            updatePossibilitiesInField(writable, fieldInColumn);
         }
-        for (FieldWritable fieldInRow : gameBoard[x][y].getWritable().getRowFieldInfo().getFields()) {
-            if (fieldInRow != gameBoard[x][y].getWritable() && fieldInRow.getState() == FieldWritable.State.FILLED) {
-                gameBoard[x][y].getWritable().revokePossibility(fieldInRow.getValue());
+        for (FieldWritable fieldInRow : writable.getRowFieldInfo().getFields()) {
+            updatePossibilitiesInField(writable, fieldInRow);
+        }
+    }
+
+    private void updatePossibilitiesInField(FieldWritable writable, FieldWritable fieldInRow) {
+        if (fieldInRow != writable && fieldInRow.getState() == FieldWritable.State.UNFILLED) {
+            fieldInRow.revokePossibility(writable.getValue());
+            if(fieldInRow.getPossibilitiesCount() == 1){
+                fieldInRow.setState(FieldWritable.State.FILLED);
+                updatePossibilitiesByFilledFields(fieldInRow);
             }
         }
     }
@@ -335,25 +310,4 @@ public class Board {
         }
         return builder.toString();
     }
-
-    /*private void updatePossibilities(int x, int y, int value) {
-        if(1>0)return;
-        for (int i = 0; i != gameBoard[x][y].getWritable().getColumnFieldInfo().getFields().size(); i++) {
-            int setNewFieldValue = -1;
-            if (gameBoard[x][y].getWritable().getColumnFieldInfo().getFields().elementAt(i) != gameBoard[x][y].getWritable()) {
-                setNewFieldValue = gameBoard[x][y].getWritable().getColumnFieldInfo().getFields().elementAt(i).revokePossibility(value);
-                if (setNewFieldValue != -1)
-                    ;//setField(x, y, setNewFieldValue);
-            }
-        }
-        for (int i = 0; i != gameBoard[x][y].getWritable().getRowFieldInfo().getFields().size(); i++) {
-            int setNewFieldValue = -1;
-            if (gameBoard[x][y].getWritable().getRowFieldInfo().getFields().elementAt(i) != gameBoard[x][y].getWritable()) {
-                setNewFieldValue = gameBoard[x][y].getWritable().getRowFieldInfo().getFields().elementAt(i).revokePossibility(value);
-                if (setNewFieldValue != -1)
-                    ;//setField(x, y, setNewFieldValue);
-            }
-        }
-
-    }*/
 }
