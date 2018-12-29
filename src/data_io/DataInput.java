@@ -42,7 +42,7 @@ public class DataInput {
         }
     }
 
-    public board makeGameBoard() {
+    public Board makeGameBoard() {
         if (board == null)
             return null;
         return new Board((byte) this.width, (byte) this.height, this.board);

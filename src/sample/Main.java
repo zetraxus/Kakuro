@@ -1,7 +1,7 @@
 package sample;
 
 import data_io.DataInput;
-import data_structure.board;
+import data_structure.Board;
 import generator.BoardGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +28,7 @@ public class Main extends Application {
             outputFile = args[1];
 
         DataInput di = new DataInput();
+//        di.readString(i.toString());
         di.ReadBoard(inputFile);
 
         Board template = di.makeGameBoard();
@@ -35,8 +36,8 @@ public class Main extends Application {
         Solver solver = new Solver(template, template.getCost()); // TODO compute initial value
         Board result = solver.solve();
 
-//        if (outputFile != null)
-//            writeResultToFile(result, outputFile);
+        if (outputFile != null)
+            writeResultToFile(result, outputFile);
 
         System.exit(0);
 //        launch(args);
