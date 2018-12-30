@@ -47,7 +47,6 @@ public class PossiblesSumCombinations {
                 String[] key1 = key.split("in");
                 int sum = new Integer(key1[0]);
                 int length = new Integer(key1[1]);
-                System.out.println(sum + " " + length);
 
                 splited_line = splited_line[1].split("-");
                 List<int[]> combinations = new ArrayList<>();
