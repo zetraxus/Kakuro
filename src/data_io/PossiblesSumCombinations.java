@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.util.*;
 
 public class PossiblesSumCombinations {
-    private static Map<String, List<int[]>> possiblesSums = null;
+    private static ArrayList<ArrayList<List<int[]>>> possiblesSums = null;
     private static List<int[]> emptyList = new ArrayList<>();
 
     public static List<int[]> getPossiblesSumsCombinations(int sum, int fieldsCount) {
         if (possiblesSums == null)
             loadCombinationsFromFile("examples/sums.txt");
 
-        String key = String.format("%din%d", sum, fieldsCount);
-        return Collections.unmodifiableList(possiblesSums.getOrDefault(key, emptyList));
+        final List<int[]> ints = Collections.unmodifiableList(possiblesSums.get(fieldsCount - 1).get(sum - 1));
+        if (ints != null) {
+            return ints;
+        }
+        return emptyList;
     }
 
     public static boolean[] getPossibilities(int sum, int fieldsCount) {
@@ -30,7 +33,13 @@ public class PossiblesSumCombinations {
     }
 
     private static void loadCombinationsFromFile(String filename) {
-        possiblesSums = new HashMap<>();
+        possiblesSums = new ArrayList<>();
+        for (int i = 0; i != 9; ++i) {
+            possiblesSums.add(new ArrayList<>());
+            for (int j = 0; j != 45; ++j) {
+                possiblesSums.get(i).add(new ArrayList<>());
+            }
+        }
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -39,6 +48,10 @@ public class PossiblesSumCombinations {
             while ((line = br.readLine()) != null) {
                 String[] splited_line = line.split(";");
                 String key = splited_line[0];
+                String[] key1 = key.split("in");
+                int sum = new Integer(key1[0]);
+                int length = new Integer(key1[1]);
+                System.out.println(sum + " " + length);
 
                 splited_line = splited_line[1].split("-");
                 List<int[]> combinations = new ArrayList<>();
@@ -50,7 +63,7 @@ public class PossiblesSumCombinations {
                     }
                     combinations.add(possibleSum);
                 }
-                possiblesSums.put(key, combinations);
+                possiblesSums.get(length - 1).set(sum-1,combinations);
             }
             br.close();
         } catch (IOException exc) {
