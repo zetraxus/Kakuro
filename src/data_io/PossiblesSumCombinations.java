@@ -8,6 +8,7 @@ import java.util.*;
 public class PossiblesSumCombinations {
     private static ArrayList<ArrayList<List<int[]>>> possiblesSums = null;
     private static List<int[]> emptyList = new ArrayList<>();
+    private static boolean[][][] poss = null;
 
     public static List<int[]> getPossiblesSumsCombinations(int sum, int fieldsCount) {
         if (possiblesSums == null)
@@ -21,15 +22,10 @@ public class PossiblesSumCombinations {
     }
 
     public static boolean[] getPossibilities(int sum, int fieldsCount) {
-        boolean[] possibilities = new boolean[9];
+        if (possiblesSums == null)
+            loadCombinationsFromFile("examples/sums.txt");
 
-        List<int[]> possibleCombinations = getPossiblesSumsCombinations(sum, fieldsCount);
-
-        for (int[] combination : possibleCombinations)
-            for (int digit : combination)
-                possibilities[digit - 1] = true;
-
-        return possibilities;
+        return poss[fieldsCount-1][sum-1];
     }
 
     private static void loadCombinationsFromFile(String filename) {
@@ -63,9 +59,27 @@ public class PossiblesSumCombinations {
                     }
                     combinations.add(possibleSum);
                 }
-                possiblesSums.get(length - 1).set(sum-1,combinations);
+                possiblesSums.get(length - 1).set(sum - 1, combinations);
             }
             br.close();
+
+            //seting poss
+            List<int[]> combinations;
+            poss = new boolean[9][45][];
+            for (int i = 0; i != 9; ++i) {
+                for (int j = 0; j != 45; ++j) {
+                    if ((combinations=possiblesSums.get(i).get(j)) != null) {
+                        boolean[] possibilities = new boolean[9];
+                        for (int[] combination : combinations)
+                            for (int digit : combination)
+                                possibilities[digit - 1] = true;
+
+                            poss[i][j]=possibilities;
+
+                    }
+                }
+            }
+
         } catch (IOException exc) {
             System.out.println(exc.getMessage());
         }
