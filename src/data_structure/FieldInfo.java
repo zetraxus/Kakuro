@@ -56,12 +56,11 @@ public class FieldInfo {
 
     public boolean isPossibleToSolve() {
         List<List<FieldWritable>> possibilities = this.collectAllPossibilities();
-//        List<int[]> possibleCombinations = new ArrayList<>();
         boolean yes = false;
         for (int[] combination : PossiblesSumCombinations.getPossiblesSumsCombinations(this.sum, this.fieldCount)) {
             if (isPossibleCombination(combination, 0, possibilities, new ArrayList<>())) {
                 yes = true;
-                break;//possibleCombinations.add(combination);
+                break;
             }
         }
         if (!yes)
@@ -74,16 +73,12 @@ public class FieldInfo {
                 numOfFilled += 1;
             }
         }
-        if (this.sum > filledValue) {
+        if (this.sum > filledValue&&this.fieldCount - numOfFilled>1) {
             boolean[] hej = PossiblesSumCombinations.getPossibilities(this.sum - filledValue, this.fieldCount - numOfFilled);
             for (FieldWritable i : fields) {
                 if (i.getState() != FieldWritable.State.FILLED) {
                     boolean[] o = i.getPossibilities();
-                    boolean[] co = new boolean[9];
-                    for (int j = 0; j != 9; ++j)
-                        if (o[j] && hej[j]) co[j] = true;
-//                    i.setPossibilities(new boolean[]{o[0]&hej[0],o[1]&hej[1],o[2]&hej[2],o[3]&hej[3],o[4]&hej[4],o[5]&hej[5],o[6]&hej[6],o[7]&hej[7],o[8]&hej[8]});
-                    i.setPossibilities(co);
+                    i.setPossibilities(new boolean[]{o[0]&hej[0],o[1]&hej[1],o[2]&hej[2],o[3]&hej[3],o[4]&hej[4],o[5]&hej[5],o[6]&hej[6],o[7]&hej[7],o[8]&hej[8]});
                 }
             }
         }
