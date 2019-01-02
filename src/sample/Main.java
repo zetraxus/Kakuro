@@ -28,12 +28,12 @@ public class Main extends Application {
             outputFile = args[1];
 
         DataInput di = new DataInput();
-//        di.readString(i.toString());
+        //        di.readString(i.toString());
         di.ReadBoard(inputFile);
 
         Board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
-        Solver solver = new Solver(template, template.getCost()); // TODO compute initial value
+        Solver solver = new Solver(template, 0); // TODO compute initial value
         Board result = solver.solve();
 
         if (outputFile != null)

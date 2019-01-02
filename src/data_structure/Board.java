@@ -11,8 +11,8 @@ public class Board {
     private final int POSSIBLETOSOLVE = 0;
     private final int IMPOSSIBLETOSOLVE = -1;
     private final int ASCIZEROCODE = 48;
-    private byte width;
-    private byte height;
+    private byte width;//this is pointless
+    private byte height;//maybe just size?
 
     private Field2D[][] gameBoard;
     private Vector<FieldInfo> columnsInfo;
@@ -179,12 +179,11 @@ public class Board {
                         boolean[] possibilities = gameBoard[j][i].getWritable().getPossibilities();
                         for (int k = 0; k < 9; ++k) {
                             if (possibilities[k] == true) {
-                                int value = 0;//this.getCost() - getCostIfSetField(gameBoard[j][i].getWritable(), k) - 1; // current cost - 1 possibility less in every field in row and column - this field which is set
+                                int value = this.getCost();
                                 temp = new Board(this);
                                 temp.setField(j, i, k + 1);
                                 int checkIfSolved = temp.checkIfSolved();
                                 if (checkIfSolved != IMPOSSIBLETOSOLVE) {
-//                                    String newShortcut = getChangedShortcut(shortcut, shortcutPosition, k + 1);
                                     String newShortcut = temp.generateShortcut();
                                     GameState newGameState = new GameState(newShortcut, value, checkIfSolved == SOLVED, temp);
                                     newStates.add(newGameState);
@@ -208,39 +207,44 @@ public class Board {
         return newShortcut;
     }
 
-    public int getCostIfSetField(FieldWritable fieldWritable, int value) {
-        int cost = 0;
-
-        for (FieldWritable fieldInRow : fieldWritable.getRowFieldInfo().getFields()) {
-            if (fieldInRow != fieldWritable) {
-                if (fieldInRow.getPossibility(value) == true)
-                    ++cost;
-            }
-        }
-
-        for (FieldWritable fieldInColumn : fieldWritable.getColumnFieldInfo().getFields()) {
-            if (fieldInColumn != fieldWritable) {
-                if (fieldInColumn.getPossibility(value) == true)
-                    ++cost;
-            }
-        }
-
-        return cost;
-    }
-
-    public int getCost() {
-        int cost = 0;
-
-//        for (int i = 0; i < height; ++i) {
-//            for (int j = 0; j < width; ++j) {
-//                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
-//                    if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.UNFILLED) {
-//                        cost += gameBoard[j][i].getWritable().getPossibilitiesCount();
-//                    }
-//                }
+    //this function is useless in a new order
+//    public int getCostIfSetField(FieldWritable fieldWritable, int value) {
+//        int cost = 0;
+//
+//        for (FieldWritable fieldInRow : fieldWritable.getRowFieldInfo().getFields()) {
+//            if (fieldInRow != fieldWritable) {
+//                if (fieldInRow.getPossibility(value) == true)
+//                    ++cost;
 //            }
 //        }
-        return cost;
+//
+//        for (FieldWritable fieldInColumn : fieldWritable.getColumnFieldInfo().getFields()) {
+//            if (fieldInColumn != fieldWritable) {
+//                if (fieldInColumn.getPossibility(value) == true)
+//                    ++cost;
+//            }
+//        }
+//
+//        return cost;
+//    }
+
+    private int getCost(){
+        int cost = 0;
+        int heuristicValue = 0;
+
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
+                    if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.FILLED) {
+                        cost +=9;
+                    }
+                    else {
+                        heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
+                    }
+                }
+            }
+        }
+        return cost+heuristicValue;
     }
 
     private void setPossibilitiesBasedOnTemplate() {
