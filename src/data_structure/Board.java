@@ -3,8 +3,7 @@ package data_structure;
 
 import data_io.PossiblesSumCombinations;
 
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*;
 
 
 public class Board {
@@ -18,6 +17,8 @@ public class Board {
     private Field2D[][] gameBoard;
     private Vector<FieldInfo> columnsInfo;
     private Vector<FieldInfo> rowsInfo;
+
+    private Set<FieldInfo> changedInfo = new HashSet<>();
 
     public Board(byte width, byte height, Field2D[][] startBoard) {
         this.width = width;
@@ -36,6 +37,8 @@ public class Board {
 
     public void setField(int x, int y, int value) {
         gameBoard[x][y].getWritable().setValue(value);
+        changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
+        changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
         updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
     }
 
@@ -102,14 +105,23 @@ public class Board {
     }
 
     public boolean isPossibleToSolve() {
-        // check if in all row and column sum it's possible to set at least one combination of sums
-        for (FieldInfo row : this.rowsInfo) {
-            if (!row.isPossibleToSolve())
-                return false;
+        if (changedInfo.size() == 0){
+            // check if in all row and column sum it's possible to set at least one combination of sums
+            for (FieldInfo row : this.rowsInfo) {
+                if (!row.isPossibleToSolve())
+                    return false;
+            }
+            for (FieldInfo column : this.columnsInfo) {
+                if (!column.isPossibleToSolve())
+                    return false;
+            }
         }
-        for (FieldInfo column : this.columnsInfo) {
-            if (!column.isPossibleToSolve())
-                return false;
+        else {
+            // check only on changed sums
+            for (FieldInfo changed : this.changedInfo){
+                if (!changed.isPossibleToSolve())
+                    return false;
+            }
         }
         return true;
     }
@@ -289,6 +301,8 @@ public class Board {
     private void updatePossibilitiesInField(FieldWritable writable, FieldWritable fieldInRow) {
         if (fieldInRow != writable && fieldInRow.getState() == FieldWritable.State.UNFILLED) {
             fieldInRow.revokePossibility(writable.getValue());
+            changedInfo.add(fieldInRow.getRowFieldInfo());
+            changedInfo.add(fieldInRow.getColumnFieldInfo());
             if(fieldInRow.getPossibilitiesCount() == 1){
                 fieldInRow.setState(FieldWritable.State.FILLED);
                 updatePossibilitiesByFilledFields(fieldInRow);
