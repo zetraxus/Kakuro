@@ -18,7 +18,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         BoardGenerator i = new BoardGenerator(7);
-        long start = System.nanoTime();
         String inputFile = "examples/board_6x6_2.in";
         String outputFile = null;
 
@@ -34,6 +33,7 @@ public class Main extends Application {
         Board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
         Solver solver = new Solver(template, 0);
+        long start = System.nanoTime();
         Board result = solver.solve();
         long end = System.nanoTime();
         System.out.println("time: " + (double) (end - start) / 1000000000);

@@ -174,14 +174,6 @@ public class Board {
         return newStates;
     }
 
-    private String getChangedShortcut(StringBuilder originalShortcut, int shortcutPosition, int newValue) {//is it necessary?
-        char current = originalShortcut.charAt(shortcutPosition);
-        originalShortcut.setCharAt(shortcutPosition, Character.forDigit(newValue, 10));
-        String newShortcut = originalShortcut.toString();
-        originalShortcut.setCharAt(shortcutPosition, current);
-        return newShortcut;
-    }
-
     private int getCost() {
         int cost = 0;
         int heuristicValue = 0;
