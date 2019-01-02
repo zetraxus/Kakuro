@@ -28,7 +28,7 @@ public class Main extends Application {
             outputFile = args[1];
 
         DataInput di = new DataInput();
-//        di.readString(i.toString());
+        //        di.readString(i.toString());
         di.ReadBoard(inputFile);
 
         Board template = di.makeGameBoard();

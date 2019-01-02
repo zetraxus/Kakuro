@@ -236,10 +236,10 @@ public class Board {
             for (int j = 0; j < width; ++j) {
                 if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
                     if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.FILLED) {
-//                        cost +=9;
+                        cost +=9;
                     }
                     else {
-//                        heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
+                        heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
                     }
                 }
             }
