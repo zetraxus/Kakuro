@@ -56,14 +56,14 @@ public class FieldInfo {
 
     public boolean isPossibleToSolve() {
         List<List<FieldWritable>> possibilities = this.collectAllPossibilities();
-        boolean yes = false;
+        boolean possibleToSolve = false;
         for (int[] combination : PossiblesSumCombinations.getPossiblesSumsCombinations(this.sum, this.fieldCount)) {
             if (isPossibleCombination(combination, 0, possibilities, new ArrayList<>())) {
-                yes = true;
+                possibleToSolve = true;
                 break;
             }
         }
-        if (!yes)
+        if (!possibleToSolve)
             return false;
         int filledValue = 0;
         int numOfFilled = 0;
@@ -73,12 +73,12 @@ public class FieldInfo {
                 numOfFilled += 1;
             }
         }
-        if (this.sum > filledValue&&this.fieldCount - numOfFilled>1) {
-            boolean[] hej = PossiblesSumCombinations.getPossibilities(this.sum - filledValue, this.fieldCount - numOfFilled);
+        if (this.sum > filledValue && this.fieldCount - numOfFilled > 1) {
+            boolean[] possibilitiesOfLine = PossiblesSumCombinations.getPossibilities(this.sum - filledValue, this.fieldCount - numOfFilled);
             for (FieldWritable i : fields) {
                 if (i.getState() != FieldWritable.State.FILLED) {
-                    boolean[] o = i.getPossibilities();
-                    i.setPossibilities(new boolean[]{o[0]&hej[0],o[1]&hej[1],o[2]&hej[2],o[3]&hej[3],o[4]&hej[4],o[5]&hej[5],o[6]&hej[6],o[7]&hej[7],o[8]&hej[8]});
+                    boolean[] possibilitiesOfThisField = i.getPossibilities();
+                    i.setPossibilities(new boolean[]{possibilitiesOfThisField[0] & possibilitiesOfLine[0], possibilitiesOfThisField[1] & possibilitiesOfLine[1], possibilitiesOfThisField[2] & possibilitiesOfLine[2], possibilitiesOfThisField[3] & possibilitiesOfLine[3], possibilitiesOfThisField[4] & possibilitiesOfLine[4], possibilitiesOfThisField[5] & possibilitiesOfLine[5], possibilitiesOfThisField[6] & possibilitiesOfLine[6], possibilitiesOfThisField[7] & possibilitiesOfLine[7], possibilitiesOfThisField[8] & possibilitiesOfLine[8]});
                 }
             }
         }
