@@ -25,7 +25,7 @@ public class PossiblesSumCombinations {
         if (possiblesSums == null)
             loadCombinationsFromFile("examples/sums.txt");
 
-        return poss[fieldsCount-1][sum-1];
+        return poss[fieldsCount - 1][sum - 1];
     }
 
     private static void loadCombinationsFromFile(String filename) {
@@ -67,13 +67,13 @@ public class PossiblesSumCombinations {
             poss = new boolean[9][45][];
             for (int i = 0; i != 9; ++i) {
                 for (int j = 0; j != 45; ++j) {
-                    if ((combinations=possiblesSums.get(i).get(j)) != null) {
+                    if ((combinations = possiblesSums.get(i).get(j)) != null) {
                         boolean[] possibilities = new boolean[9];
                         for (int[] combination : combinations)
                             for (int digit : combination)
                                 possibilities[digit - 1] = true;
 
-                            poss[i][j]=possibilities;
+                        poss[i][j] = possibilities;
 
                     }
                 }

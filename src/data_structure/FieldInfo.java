@@ -3,6 +3,7 @@ package data_structure;
 import data_io.PossiblesSumCombinations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -55,11 +56,34 @@ public class FieldInfo {
 
     public boolean isPossibleToSolve() {
         List<List<FieldWritable>> possibilities = this.collectAllPossibilities();
+        boolean possibleToSolve = false;
         for (int[] combination : PossiblesSumCombinations.getPossiblesSumsCombinations(this.sum, this.fieldCount)) {
-            if (isPossibleCombination(combination, 0, possibilities, new ArrayList<>()))
-                return true;
+            if (isPossibleCombination(combination, 0, possibilities, new ArrayList<>())) {
+                possibleToSolve = true;
+                break;
+            }
         }
-        return false;
+        if (!possibleToSolve)
+            return false;
+        int filledValue = 0;
+        int numOfFilled = 0;
+        for (FieldWritable i : fields) {
+            if (i.getState() == FieldWritable.State.FILLED) {
+                filledValue += i.getValue();
+                numOfFilled += 1;
+            }
+        }
+        if (this.sum > filledValue && this.fieldCount - numOfFilled > 1) {
+            boolean[] possibilitiesOfLine = PossiblesSumCombinations.getPossibilities(this.sum - filledValue, this.fieldCount - numOfFilled);
+            for (FieldWritable i : fields) {
+                if (i.getState() != FieldWritable.State.FILLED) {
+                    boolean[] possibilitiesOfThisField = i.getPossibilities();
+                    i.setPossibilities(new boolean[]{possibilitiesOfThisField[0] & possibilitiesOfLine[0], possibilitiesOfThisField[1] & possibilitiesOfLine[1], possibilitiesOfThisField[2] & possibilitiesOfLine[2], possibilitiesOfThisField[3] & possibilitiesOfLine[3], possibilitiesOfThisField[4] & possibilitiesOfLine[4], possibilitiesOfThisField[5] & possibilitiesOfLine[5], possibilitiesOfThisField[6] & possibilitiesOfLine[6], possibilitiesOfThisField[7] & possibilitiesOfLine[7], possibilitiesOfThisField[8] & possibilitiesOfLine[8]});
+                }
+            }
+        }
+
+        return true;
     }
 
     private boolean isPossibleCombination(int[] combination, int index, List<List<FieldWritable>> possibilities, List<FieldWritable> excluded) {
