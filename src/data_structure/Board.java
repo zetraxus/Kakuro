@@ -11,8 +11,10 @@ public class Board {
     private final int POSSIBLETOSOLVE = 0;
     private final int IMPOSSIBLETOSOLVE = -1;
     private final int ASCIZEROCODE = 48;
-    private byte width;//this is pointless
+    private byte width;//this is pointless TODO
     private byte height;//maybe just size?
+    private int[] history;
+    private int pointInHistory;
 
     private Field2D[][] gameBoard;
     private Vector<FieldInfo> columnsInfo;
@@ -24,6 +26,8 @@ public class Board {
         this.width = width;
         this.height = height;
         fillGameBoard(startBoard);
+        history = new int[2*(width-1)*(height-1)];
+        pointInHistory=0;
 
         setPossibilitiesBasedOnTemplate();
         setPossibilitiesBasedOnFilledField();
@@ -33,6 +37,8 @@ public class Board {
         width = oldBoard.width;
         height = oldBoard.height;
         fillGameBoard(oldBoard.gameBoard);
+        history=oldBoard.history.clone();
+        pointInHistory=oldBoard.pointInHistory;
     }
 
     public void setField(int x, int y, int value) {
@@ -40,6 +46,9 @@ public class Board {
         changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
         changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
         updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
+        history[pointInHistory]=x;
+        history[pointInHistory+1]=y;
+        pointInHistory+=2;
     }
 
     private void fillGameBoard(Field2D[][] initialBoard) {
@@ -182,7 +191,7 @@ public class Board {
             for (int j = 0; j < width; ++j) {
                 if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
                     if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.FILLED) {
-                        cost += 9;
+//                        cost += 9;
                     } else {
                         heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
                     }
@@ -242,11 +251,21 @@ public class Board {
             fieldInRow.revokePossibility(writable.getValue());
             changedInfo.add(fieldInRow.getRowFieldInfo());
             changedInfo.add(fieldInRow.getColumnFieldInfo());
-            if (fieldInRow.getPossibilitiesCount() == 1) {
+            if (fieldInRow.getPossibilitiesCount() == 1) {//TODO make it better, check if there is any fieldInfo with 1 unfilled
                 fieldInRow.setState(FieldWritable.State.FILLED);
                 updatePossibilitiesByFilledFields(fieldInRow);
             }
         }
+    }
+
+    public String getHistory(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Historia\ndługość historii: ").append(pointInHistory/2).append("\n");
+        for (int i=0;i!=pointInHistory;i+=2){
+//            builder.append(history[i]).append(" ").append(history[i+1]).append("\n");
+            builder.append("x: ").append(history[i]).append(" y: ").append(history[i+1]).append(" wartość: ").append(gameBoard[history[i]][history[i+1]].getWritable().getValue()).append("\n");
+        }
+        return builder.toString();
     }
 
     @Override

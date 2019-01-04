@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        BoardGenerator i = new BoardGenerator(7);
+        BoardGenerator i = new BoardGenerator(6);
         String inputFile = "examples/board_6x6_2.in";
         String outputFile = null;
 
@@ -27,8 +27,8 @@ public class Main extends Application {
             outputFile = args[1];
 
         DataInput di = new DataInput();
-        di.readString(i.toString());
-//        di.ReadBoard(inputFile);
+//        di.readString(i.toString());
+        di.ReadBoard(inputFile);
 
         Board template = di.makeGameBoard();
         System.out.println("main:\n" + template.toString());
