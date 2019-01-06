@@ -128,7 +128,7 @@ public class FieldWritable {
         storedValue = -1;
     }
 
-    enum State {
+    public enum State {
         FILLED,
         UNFILLED
     }

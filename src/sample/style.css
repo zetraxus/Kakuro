@@ -1,0 +1,14 @@
+.gridField {
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-alignment: center;
+    -fx-padding: 0;
+}
+.blank {
+     -fx-background-color: grey;
+}
+.info {
+    -fx-background-color: grey;
+    -fx-text-fill: black;
+    -fx-font-weight: bolder;
+}

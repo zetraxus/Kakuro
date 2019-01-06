@@ -76,7 +76,7 @@ public class Field2D { // we need that class to gather information about rows an
         }
     }
 
-    enum Type {
+    public enum Type {
         WRITABLE, // FieldWritable which should be filled
         INFOCOLUMN, // info about column, row is null
         INFOROW, // info about row, column is null

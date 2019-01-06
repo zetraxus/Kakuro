@@ -249,6 +249,24 @@ public class Board {
         }
     }
 
+    public byte getHeight() {
+        return height;
+    }
+
+    public byte getWidth() {
+        return width;
+    }
+
+    public Field2D[][] getGameBoard() {
+        return gameBoard;
+    }
+
+    public boolean isSolved(){
+        if (checkIfSolved() == SOLVED)
+            return true;
+        return false;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
