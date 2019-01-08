@@ -22,11 +22,11 @@ public class Solver {
     public Solver(Board board, int initialValue) {
 //        System.out.println("Solver() board\n" + board.toString());
         template = new Board(board);
-        System.out.println("Solver() template\n" + template.toString());
+//        System.out.println("Solver() template\n" + template.toString());
 //        System.out.println("Solver() after setfield template\n" + template.toString());
 //        System.out.println("Solver() after setfield board\n" + board.toString());
         GameState initial = new GameState(template.generateShortcut(), initialValue, false, template);
-        System.out.println(template.generateShortcut());
+//        System.out.println(template.generateShortcut());
         queue.add(initial);
         mapsAddedToQueue = new HashSet<>();
         mapsAddedToQueue.add(template.generateShortcut());
@@ -44,7 +44,7 @@ public class Solver {
             analyzedBoard = analyzed.getBoard();
             if (analyzed.isSolved()) {
                 System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
-                System.out.println(analyzedBoard);
+//                System.out.println(analyzedBoard);
                 break;
             }
 
@@ -56,9 +56,9 @@ public class Solver {
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
-            if(countOfAnalyzed%1000 == 0){
-                System.out.println(countOfAnalyzed + " " + queue.size());
-            }
+//            if(countOfAnalyzed%1000 == 0){
+//                System.out.println(countOfAnalyzed + " " + queue.size());
+//            }
         }
         System.out.println("Analyzed board: " + countOfAnalyzed);
 

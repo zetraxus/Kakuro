@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class Main extends Application {
 
     public static void main(String[] args) {
-//        BoardGenerator i = new BoardGenerator(30);
+//        BoardGenerator i = new BoardGenerator(7);
 
         String inputFile = null;
         String outputFile = null;
@@ -34,7 +34,7 @@ public class Main extends Application {
 
         Board template = di.makeGameBoard();
         if (template != null){
-            System.out.println("main:\n" + template.toString());
+//            System.out.println("main:\n" + template.toString());
             Solver solver = new Solver(template, 0); // TODO compute initial value
             long start = System.nanoTime();
             Board result = solver.solve();
