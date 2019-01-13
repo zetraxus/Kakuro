@@ -12,3 +12,9 @@
     -fx-text-fill: black;
     -fx-font-weight: bolder;
 }
+.red-label {
+    -fx-text-fill: red;
+}
+.green-label {
+    -fx-text-fill: green;
+}
