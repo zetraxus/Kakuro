@@ -187,7 +187,7 @@ public class Board {
             for (int j = 0; j < width; ++j) {
                 if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
                     if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.FILLED) {
-//                        cost += 9;
+                        cost += 9;
                     } else {
                         heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
                     }
@@ -254,7 +254,7 @@ public class Board {
             fieldInRow.revokePossibility(writable.getValue());
             changedInfo.add(fieldInRow.getRowFieldInfo());
             changedInfo.add(fieldInRow.getColumnFieldInfo());
-            if (fieldInRow.getPossibilitiesCount() == 1) {//TODO make it better, check if there is any fieldInfo with 1 unfilled
+            if (fieldInRow.getPossibilitiesCount() == 1) {
                 fieldInRow.setState(FieldWritable.State.FILLED);
                 history.add(fieldInRow.getColumnFieldInfo().getX(),fieldInRow.getRowFieldInfo().getY());
                 updatePossibilitiesByFilledFields(fieldInRow);
@@ -271,6 +271,23 @@ public class Board {
             builder.append("x: ").append(pair.getKey()).append(" y: ").append(pair.getValue()).append(" wartość: ").append(gameBoard[pair.getKey()][pair.getValue()].getWritable().getValue()).append("\n");
         }
         return builder.toString();
+}
+    public byte getHeight() {
+        return height;
+    }
+
+    public byte getWidth() {
+        return width;
+    }
+
+    public Field2D[][] getGameBoard() {
+        return gameBoard;
+    }
+
+    public boolean isSolved(){
+        if (checkIfSolved() == SOLVED)
+            return true;
+        return false;
     }
 
     @Override

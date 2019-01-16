@@ -22,7 +22,7 @@ public class Solver {
     public Solver(Board board, int initialValue) {
         template = new Board(board);
         GameState initial = new GameState(template.generateShortcut(), initialValue, false, template);
-        System.out.println(template.generateShortcut());
+//        System.out.println(template.generateShortcut());
         queue.add(initial);
         mapsAddedToQueue = new HashSet<>();
         mapsAddedToQueue.add(template.generateShortcut());
@@ -53,9 +53,9 @@ public class Solver {
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
-            if(countOfAnalyzed%1000 == 0){
-                System.out.println(countOfAnalyzed + " " + queue.size());
-            }
+//            if(countOfAnalyzed%1000 == 0){
+//                System.out.println(countOfAnalyzed + " " + queue.size());
+//            }
         }
         System.out.println("Analyzed board: " + countOfAnalyzed);
 
