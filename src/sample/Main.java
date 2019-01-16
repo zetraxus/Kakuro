@@ -18,7 +18,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         BoardGenerator i = new BoardGenerator(6);
-        String inputFile = "examples/board_6x6_2.in";
+        String inputFile = "examples/board_6x6.in";
         String outputFile = null;
 
         if (args.length >= 1)

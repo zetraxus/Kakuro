@@ -26,8 +26,8 @@ public class Board {
         this.width = width;
         this.height = height;
         fillGameBoard(startBoard);
-        history = new int[2*(width-1)*(height-1)];
-        pointInHistory=0;
+        history = new int[2 * (width - 1) * (height - 1)];
+        pointInHistory = 0;
 
         setPossibilitiesBasedOnTemplate();
         setPossibilitiesBasedOnFilledField();
@@ -37,8 +37,8 @@ public class Board {
         width = oldBoard.width;
         height = oldBoard.height;
         fillGameBoard(oldBoard.gameBoard);
-        history=oldBoard.history.clone();
-        pointInHistory=oldBoard.pointInHistory;
+        history = oldBoard.history.clone();
+        pointInHistory = oldBoard.pointInHistory;
     }
 
     public void setField(int x, int y, int value) {
@@ -46,9 +46,9 @@ public class Board {
         changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
         changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
         updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
-        history[pointInHistory]=x;
-        history[pointInHistory+1]=y;
-        pointInHistory+=2;
+        history[pointInHistory] = x;
+        history[pointInHistory + 1] = y;
+        pointInHistory += 2;
     }
 
     private void fillGameBoard(Field2D[][] initialBoard) {
@@ -209,8 +209,14 @@ public class Board {
         for (FieldInfo column : columnsInfo) {
             possibilities = PossiblesSumCombinations.getPossibilities(column.getSum(), column.getFieldCount());
             for (FieldWritable j : column.getFields()) {
-                if (j.getState() == FieldWritable.State.UNFILLED)
+                if (j.getState() == FieldWritable.State.UNFILLED) {
                     j.setPossibilities(possibilities);
+                    if (j.getState() == FieldWritable.State.FILLED) {
+                        history[pointInHistory] = j.getColumnFieldInfo().getX();
+                        history[pointInHistory + 1] = j.getRowFieldInfo().getY();
+                        pointInHistory += 2;
+                    }
+                }
             }
         }
 
@@ -222,6 +228,11 @@ public class Board {
                     for (int k = 0; k < 9; ++k)
                         crossPossibilities[k] = possibilities[k] & possibilitiesRow[k];
                     writable.setPossibilities(crossPossibilities);
+                    if (writable.getState() == FieldWritable.State.FILLED) {
+                        history[pointInHistory] = writable.getColumnFieldInfo().getX();
+                        history[pointInHistory + 1] = writable.getRowFieldInfo().getY();
+                        pointInHistory += 2;
+                    }
                 }
             }
         }
@@ -253,17 +264,20 @@ public class Board {
             changedInfo.add(fieldInRow.getColumnFieldInfo());
             if (fieldInRow.getPossibilitiesCount() == 1) {//TODO make it better, check if there is any fieldInfo with 1 unfilled
                 fieldInRow.setState(FieldWritable.State.FILLED);
+                history[pointInHistory] = fieldInRow.getColumnFieldInfo().getX();
+                history[pointInHistory + 1] = fieldInRow.getRowFieldInfo().getY();
+                pointInHistory += 2;
                 updatePossibilitiesByFilledFields(fieldInRow);
             }
         }
     }
 
-    public String getHistory(){
+    public String getHistory() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Historia\ndługość historii: ").append(pointInHistory/2).append("\n");
-        for (int i=0;i!=pointInHistory;i+=2){
+        builder.append("Historia\ndługość historii: ").append(pointInHistory / 2).append("\n");
+        for (int i = 0; i != pointInHistory; i += 2) {
 //            builder.append(history[i]).append(" ").append(history[i+1]).append("\n");
-            builder.append("x: ").append(history[i]).append(" y: ").append(history[i+1]).append(" wartość: ").append(gameBoard[history[i]][history[i+1]].getWritable().getValue()).append("\n");
+            builder.append("x: ").append(history[i]).append(" y: ").append(history[i + 1]).append(" wartość: ").append(gameBoard[history[i]][history[i + 1]].getWritable().getValue()).append("\n");
         }
         return builder.toString();
     }
