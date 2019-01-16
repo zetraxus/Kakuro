@@ -2,6 +2,7 @@ package data_structure;
 
 
 import data_io.PossiblesSumCombinations;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -13,8 +14,7 @@ public class Board {
     private final int ASCIZEROCODE = 48;
     private byte width;//this is pointless TODO
     private byte height;//maybe just size?
-    private int[] history;
-    private int pointInHistory;
+    private History history;
 
     private Field2D[][] gameBoard;
     private Vector<FieldInfo> columnsInfo;
@@ -26,8 +26,7 @@ public class Board {
         this.width = width;
         this.height = height;
         fillGameBoard(startBoard);
-        history = new int[2 * (width - 1) * (height - 1)];
-        pointInHistory = 0;
+        history = new History(width,height);
 
         setPossibilitiesBasedOnTemplate();
         setPossibilitiesBasedOnFilledField();
@@ -37,8 +36,7 @@ public class Board {
         width = oldBoard.width;
         height = oldBoard.height;
         fillGameBoard(oldBoard.gameBoard);
-        history = oldBoard.history.clone();
-        pointInHistory = oldBoard.pointInHistory;
+        history= new History(width,height,oldBoard.history.getHistory(),oldBoard.history.getPointInHistory());
     }
 
     public void setField(int x, int y, int value) {
@@ -46,9 +44,7 @@ public class Board {
         changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
         changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
         updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
-        history[pointInHistory] = x;
-        history[pointInHistory + 1] = y;
-        pointInHistory += 2;
+        history.add(x,y);
     }
 
     private void fillGameBoard(Field2D[][] initialBoard) {
@@ -117,17 +113,17 @@ public class Board {
         if (changedInfo.size() == 0) {
             // check if in all row and column sum it's possible to set at least one combination of sums
             for (FieldInfo row : this.rowsInfo) {
-                if (!row.isPossibleToSolve())
+                if (!row.isPossibleToSolve(history))
                     return false;
             }
             for (FieldInfo column : this.columnsInfo) {
-                if (!column.isPossibleToSolve())
+                if (!column.isPossibleToSolve(history))
                     return false;
             }
         } else {
             // check only on changed sums
             for (FieldInfo changed : this.changedInfo) {
-                if (!changed.isPossibleToSolve())
+                if (!changed.isPossibleToSolve(history))
                     return false;
             }
         }
@@ -212,9 +208,7 @@ public class Board {
                 if (j.getState() == FieldWritable.State.UNFILLED) {
                     j.setPossibilities(possibilities);
                     if (j.getState() == FieldWritable.State.FILLED) {
-                        history[pointInHistory] = j.getColumnFieldInfo().getX();
-                        history[pointInHistory + 1] = j.getRowFieldInfo().getY();
-                        pointInHistory += 2;
+                        history.add(j.getColumnFieldInfo().getX(),j.getRowFieldInfo().getY());
                     }
                 }
             }
@@ -229,9 +223,7 @@ public class Board {
                         crossPossibilities[k] = possibilities[k] & possibilitiesRow[k];
                     writable.setPossibilities(crossPossibilities);
                     if (writable.getState() == FieldWritable.State.FILLED) {
-                        history[pointInHistory] = writable.getColumnFieldInfo().getX();
-                        history[pointInHistory + 1] = writable.getRowFieldInfo().getY();
-                        pointInHistory += 2;
+                        history.add(writable.getColumnFieldInfo().getX(),writable.getRowFieldInfo().getY());
                     }
                 }
             }
@@ -264,9 +256,7 @@ public class Board {
             changedInfo.add(fieldInRow.getColumnFieldInfo());
             if (fieldInRow.getPossibilitiesCount() == 1) {//TODO make it better, check if there is any fieldInfo with 1 unfilled
                 fieldInRow.setState(FieldWritable.State.FILLED);
-                history[pointInHistory] = fieldInRow.getColumnFieldInfo().getX();
-                history[pointInHistory + 1] = fieldInRow.getRowFieldInfo().getY();
-                pointInHistory += 2;
+                history.add(fieldInRow.getColumnFieldInfo().getX(),fieldInRow.getRowFieldInfo().getY());
                 updatePossibilitiesByFilledFields(fieldInRow);
             }
         }
@@ -274,10 +264,11 @@ public class Board {
 
     public String getHistory() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Historia\ndługość historii: ").append(pointInHistory / 2).append("\n");
-        for (int i = 0; i != pointInHistory; i += 2) {
+        builder.append("Historia\ndługość historii: ").append(history.getPointInHistory()/ 2).append("\n");
+        for (int i = 0; i != history.getPointInHistory()/2; ++i) {
 //            builder.append(history[i]).append(" ").append(history[i+1]).append("\n");
-            builder.append("x: ").append(history[i]).append(" y: ").append(history[i + 1]).append(" wartość: ").append(gameBoard[history[i]][history[i + 1]].getWritable().getValue()).append("\n");
+            Pair<Integer,Integer> pair = history.getValue(i);
+            builder.append("x: ").append(pair.getKey()).append(" y: ").append(pair.getValue()).append(" wartość: ").append(gameBoard[pair.getKey()][pair.getValue()].getWritable().getValue()).append("\n");
         }
         return builder.toString();
     }

@@ -54,7 +54,7 @@ public class FieldInfo {
         fields.add(fieldWritable);
     }
 
-    public boolean isPossibleToSolve() {
+    public boolean isPossibleToSolve(History history) {
         List<List<FieldWritable>> possibilities = this.collectAllPossibilities();
         boolean possibleToSolve = false;
         for (int[] combination : PossiblesSumCombinations.getPossiblesSumsCombinations(this.sum, this.fieldCount)) {
@@ -79,6 +79,9 @@ public class FieldInfo {
                 if (i.getState() != FieldWritable.State.FILLED) {
                     boolean[] possibilitiesOfThisField = i.getPossibilities();
                     i.setPossibilities(new boolean[]{possibilitiesOfThisField[0] & possibilitiesOfLine[0], possibilitiesOfThisField[1] & possibilitiesOfLine[1], possibilitiesOfThisField[2] & possibilitiesOfLine[2], possibilitiesOfThisField[3] & possibilitiesOfLine[3], possibilitiesOfThisField[4] & possibilitiesOfLine[4], possibilitiesOfThisField[5] & possibilitiesOfLine[5], possibilitiesOfThisField[6] & possibilitiesOfLine[6], possibilitiesOfThisField[7] & possibilitiesOfLine[7], possibilitiesOfThisField[8] & possibilitiesOfLine[8]});
+                    if (i.getState() == FieldWritable.State.FILLED) {
+                        history.add(i.getColumnFieldInfo().getX(), i.getRowFieldInfo().getY());
+                    }
                 }
             }
         }
