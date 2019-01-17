@@ -1,3 +1,5 @@
-1. Get board from web
-2. Set it as `BOARD` in script
-3. Run `python getboard.py > out`
+1. Run `python getboard.py <size> > out` (for Linux) or `py getboard.py <size> > out` (for Windows)
+
+Size must be acceptable by kakuros.com, e.g. `5x5`: 
+
+`python getboard.py 5x5 > out`

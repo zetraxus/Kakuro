@@ -46,6 +46,24 @@ def translate_board(board):
     
     return results
 
+def download_board(size):
+    import requests
+    import re
+
+    response = requests.get("https://www.kakuros.com/?s=%s" % size)
+
+    if response.status_code == 200:
+        results = re.findall(r"var board = ([\s0-9\[\] ,-]*)", response.content)
+        for e in results:
+            return eval(e)
+    return []
+
+
 if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) > 1:
+        BOARD = download_board(sys.argv[1])
+
     print('\n'.join(translate_board(BOARD)))
 
