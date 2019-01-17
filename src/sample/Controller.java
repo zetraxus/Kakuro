@@ -96,8 +96,7 @@ public class Controller {
 
     @FXML
     private void checkIsSolved() {
-        if (!collectValues())
-        {
+        if (!collectValues()) {
             setRedOutput("Set all fields before check");
             return;
         }
@@ -125,13 +124,13 @@ public class Controller {
         return true;
     }
 
-    private void setRedOutput(String message){
+    private void setRedOutput(String message) {
         outputLabel.getStyleClass().clear();
         outputLabel.getStyleClass().add("red-label");
         outputLabel.setText(message);
     }
 
-    private void setGreenOutput(String message){
+    private void setGreenOutput(String message) {
         outputLabel.getStyleClass().clear();
         outputLabel.getStyleClass().add("green-label");
         outputLabel.setText(message);
@@ -149,13 +148,17 @@ public class Controller {
     }
 
     @FXML
-    private void openFile(){
+    private void openFile() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("./examples"));
         fileChooser.setTitle("Open Resource File");
         File file = fileChooser.showOpenDialog(outputLabel.getScene().getWindow());
 
         DataInput di = new DataInput();
-        di.ReadBoard(file.getAbsolutePath());
+        if (file != null)
+            di.ReadBoard(file.getAbsolutePath());
+        else
+            di.ReadBoard(new File("./examples/board_4x4.in").getAbsolutePath());
         board = di.makeGameBoard();
         originalBoard = di.makeGameBoard();
 

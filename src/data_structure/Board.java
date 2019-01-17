@@ -15,6 +15,7 @@ public class Board {
     private byte width;//this is pointless TODO
     private byte height;//maybe just size?
     private History history;
+    private int NumberOfPossiblilities;
 
     private Field2D[][] gameBoard;
     private Vector<FieldInfo> columnsInfo;
@@ -23,6 +24,7 @@ public class Board {
     private Set<FieldInfo> changedInfo = new HashSet<>();
 
     public Board(byte width, byte height, Field2D[][] startBoard) {
+        NumberOfPossiblilities = 0;
         this.width = width;
         this.height = height;
         fillGameBoard(startBoard);
@@ -30,6 +32,12 @@ public class Board {
 
         setPossibilitiesBasedOnTemplate();
         setPossibilitiesBasedOnFilledField();
+        for (FieldInfo j : columnsInfo) {
+            for (FieldWritable i : j.getFields()) {
+                if(i.getState()==FieldWritable.State.UNFILLED)
+                NumberOfPossiblilities+=i.getPossibilitiesCount();
+            }
+        }
     }
 
     public Board(Board oldBoard) {
@@ -37,6 +45,7 @@ public class Board {
         height = oldBoard.height;
         fillGameBoard(oldBoard.gameBoard);
         history = new History(width, height, oldBoard.history.getHistory(), oldBoard.history.getPointInHistory());
+        NumberOfPossiblilities = oldBoard.NumberOfPossiblilities;
     }
 
     public void setField(int x, int y, int value) {
@@ -160,12 +169,12 @@ public class Board {
                         boolean[] possibilities = gameBoard[j][i].getWritable().getPossibilities();
                         for (int k = 0; k < 9; ++k) {
                             if (possibilities[k] == true) {
-                                int value = this.getCost();
                                 temp = new Board(this);
                                 temp.setField(j, i, k + 1);
                                 int checkIfSolved = temp.checkIfSolved();
                                 if (checkIfSolved != IMPOSSIBLETOSOLVE) {
                                     String newShortcut = temp.generateShortcut();
+                                    int value = this.getCost();
                                     GameState newGameState = new GameState(newShortcut, value, checkIfSolved == SOLVED, temp);
                                     newStates.add(newGameState);
                                 }
@@ -187,14 +196,14 @@ public class Board {
             for (int j = 0; j < width; ++j) {
                 if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
                     if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.FILLED) {
-                        cost += 9;
+                        //cost += 9;
                     } else {
                         heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
                     }
                 }
             }
         }
-        return cost + heuristicValue;
+        return cost + heuristicValue-(NumberOfPossiblilities-heuristicValue)*10;
     }
 
     private void setPossibilitiesBasedOnTemplate() {
