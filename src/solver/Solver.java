@@ -47,7 +47,7 @@ public class Solver {
 
             Vector<GameState> newGeneratedStates = analyzedBoard.nextStep();
             for (GameState gameState : newGeneratedStates) {
-                if(!mapsAddedToQueue.contains(gameState.getBoardShortcut())){
+                if (!mapsAddedToQueue.contains(gameState.getBoardShortcut())) {
 //                    System.out.println(gameState.getBoard().toString());
                     queue.add(gameState);
                     mapsAddedToQueue.add(gameState.getBoardShortcut());

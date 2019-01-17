@@ -14,7 +14,7 @@ public class History {
 
     History(int width, int height, int[] oldHistory, int oldPointInHistory) {
         history = new int[2 * (width - 1) * (height - 1)];
-        history=oldHistory.clone();
+        history = oldHistory.clone();
         pointInHistory = oldPointInHistory;
 
     }
@@ -33,8 +33,8 @@ public class History {
         return pointInHistory;
     }
 
-    public Pair<Integer,Integer> getValue(int i){
-        return new Pair<>(history[2*i],history[2*i+1]);
+    public Pair<Integer, Integer> getValue(int i) {
+        return new Pair<>(history[2 * i], history[2 * i + 1]);
     }
 
 }

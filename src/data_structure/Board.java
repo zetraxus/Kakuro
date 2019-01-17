@@ -26,7 +26,7 @@ public class Board {
         this.width = width;
         this.height = height;
         fillGameBoard(startBoard);
-        history = new History(width,height);
+        history = new History(width, height);
 
         setPossibilitiesBasedOnTemplate();
         setPossibilitiesBasedOnFilledField();
@@ -36,7 +36,7 @@ public class Board {
         width = oldBoard.width;
         height = oldBoard.height;
         fillGameBoard(oldBoard.gameBoard);
-        history= new History(width,height,oldBoard.history.getHistory(),oldBoard.history.getPointInHistory());
+        history = new History(width, height, oldBoard.history.getHistory(), oldBoard.history.getPointInHistory());
     }
 
     public void setField(int x, int y, int value) {
@@ -44,7 +44,7 @@ public class Board {
         changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
         changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
         updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
-        history.add(x,y);
+        history.add(x, y);
     }
 
     private void fillGameBoard(Field2D[][] initialBoard) {
@@ -208,7 +208,7 @@ public class Board {
                 if (j.getState() == FieldWritable.State.UNFILLED) {
                     j.setPossibilities(possibilities);
                     if (j.getState() == FieldWritable.State.FILLED) {
-                        history.add(j.getColumnFieldInfo().getX(),j.getRowFieldInfo().getY());
+                        history.add(j.getColumnFieldInfo().getX(), j.getRowFieldInfo().getY());
                     }
                 }
             }
@@ -223,7 +223,7 @@ public class Board {
                         crossPossibilities[k] = possibilities[k] & possibilitiesRow[k];
                     writable.setPossibilities(crossPossibilities);
                     if (writable.getState() == FieldWritable.State.FILLED) {
-                        history.add(writable.getColumnFieldInfo().getX(),writable.getRowFieldInfo().getY());
+                        history.add(writable.getColumnFieldInfo().getX(), writable.getRowFieldInfo().getY());
                     }
                 }
             }
@@ -256,7 +256,7 @@ public class Board {
             changedInfo.add(fieldInRow.getColumnFieldInfo());
             if (fieldInRow.getPossibilitiesCount() == 1) {
                 fieldInRow.setState(FieldWritable.State.FILLED);
-                history.add(fieldInRow.getColumnFieldInfo().getX(),fieldInRow.getRowFieldInfo().getY());
+                history.add(fieldInRow.getColumnFieldInfo().getX(), fieldInRow.getRowFieldInfo().getY());
                 updatePossibilitiesByFilledFields(fieldInRow);
             }
         }
@@ -264,14 +264,15 @@ public class Board {
 
     public String getHistory() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Historia\ndługość historii: ").append(history.getPointInHistory()/ 2).append("\n");
-        for (int i = 0; i != history.getPointInHistory()/2; ++i) {
+        builder.append("Historia\ndługość historii: ").append(history.getPointInHistory() / 2).append("\n");
+        for (int i = 0; i != history.getPointInHistory() / 2; ++i) {
 //            builder.append(history[i]).append(" ").append(history[i+1]).append("\n");
-            Pair<Integer,Integer> pair = history.getValue(i);
+            Pair<Integer, Integer> pair = history.getValue(i);
             builder.append("x: ").append(pair.getKey()).append(" y: ").append(pair.getValue()).append(" wartość: ").append(gameBoard[pair.getKey()][pair.getValue()].getWritable().getValue()).append("\n");
         }
         return builder.toString();
-}
+    }
+
     public byte getHeight() {
         return height;
     }
@@ -284,7 +285,7 @@ public class Board {
         return gameBoard;
     }
 
-    public boolean isSolved(){
+    public boolean isSolved() {
         if (checkIfSolved() == SOLVED)
             return true;
         return false;
