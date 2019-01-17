@@ -20,11 +20,7 @@ public class Solver {
     HashSet<String> mapsAddedToQueue;
 
     public Solver(Board board, int initialValue) {
-//        System.out.println("Solver() board\n" + board.toString());
         template = new Board(board);
-//        System.out.println("Solver() template\n" + template.toString());
-//        System.out.println("Solver() after setfield template\n" + template.toString());
-//        System.out.println("Solver() after setfield board\n" + board.toString());
         GameState initial = new GameState(template.generateShortcut(), initialValue, false, template);
 //        System.out.println(template.generateShortcut());
         queue.add(initial);
@@ -44,13 +40,14 @@ public class Solver {
             analyzedBoard = analyzed.getBoard();
             if (analyzed.isSolved()) {
                 System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
-//                System.out.println(analyzedBoard);
+                System.out.println(analyzedBoard);
+                System.out.println(analyzedBoard.getHistory());
                 break;
             }
 
             Vector<GameState> newGeneratedStates = analyzedBoard.nextStep();
             for (GameState gameState : newGeneratedStates) {
-                if(!mapsAddedToQueue.contains(gameState.getBoardShortcut())){
+                if (!mapsAddedToQueue.contains(gameState.getBoardShortcut())) {
 //                    System.out.println(gameState.getBoard().toString());
                     queue.add(gameState);
                     mapsAddedToQueue.add(gameState.getBoardShortcut());

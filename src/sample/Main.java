@@ -33,7 +33,7 @@ public class Main extends Application {
             di.ReadBoard(inputFile);
 
         Board template = di.makeGameBoard();
-        if (template != null){
+        if (template != null) {
 //            System.out.println("main:\n" + template.toString());
             Solver solver = new Solver(template, 0); // TODO compute initial value
             long start = System.nanoTime();
