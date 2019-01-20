@@ -12,10 +12,11 @@ public class Board {
     private final int POSSIBLETOSOLVE = 0;
     private final int IMPOSSIBLETOSOLVE = -1;
     private final int ASCIZEROCODE = 48;
-    private byte width;//this is pointless TODO
-    private byte height;//maybe just size?
+    private byte width;
+    private byte height;
     private History history;
     private int NumberOfPossiblilities;
+    private int cost;
 
     private Field2D[][] gameBoard;
     private Vector<FieldInfo> columnsInfo;
@@ -29,13 +30,14 @@ public class Board {
         this.height = height;
         fillGameBoard(startBoard);
         history = new History(width, height);
+        cost = 0;
 
         setPossibilitiesBasedOnTemplate();
         setPossibilitiesBasedOnFilledField();
         for (FieldInfo j : columnsInfo) {
             for (FieldWritable i : j.getFields()) {
-                if(i.getState()==FieldWritable.State.UNFILLED)
-                NumberOfPossiblilities+=i.getPossibilitiesCount();
+                if (i.getState() == FieldWritable.State.UNFILLED)
+                    NumberOfPossiblilities += i.getPossibilitiesCount();
             }
         }
     }
@@ -46,6 +48,7 @@ public class Board {
         fillGameBoard(oldBoard.gameBoard);
         history = new History(width, height, oldBoard.history.getHistory(), oldBoard.history.getPointInHistory());
         NumberOfPossiblilities = oldBoard.NumberOfPossiblilities;
+        cost = oldBoard.cost;
     }
 
     public void setField(int x, int y, int value) {
@@ -189,21 +192,27 @@ public class Board {
     }
 
     private int getCost() {
-        int cost = 0;
         int heuristicValue = 0;
+        int newNumberOfPossiblilities = 0;
+        for (FieldInfo j : columnsInfo) {
+            for (FieldWritable i : j.getFields()) {
+                if (i.getState() == FieldWritable.State.UNFILLED)
+                    newNumberOfPossiblilities += i.getPossibilitiesCount();
+            }
+        }
 
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
-                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE) {
-                    if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.FILLED) {
-                        //cost += 9;
-                    } else {
-                        heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount();
-                    }
+                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE && gameBoard[j][i].getWritable().getState() == FieldWritable.State.UNFILLED) {
+                    //heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount(); USE THIS TO CHECK HOW CONSTANT SUM WORK
+                    heuristicValue++;
                 }
             }
         }
-        return cost + heuristicValue-(NumberOfPossiblilities-heuristicValue)*10;
+        heuristicValue = newNumberOfPossiblilities - heuristicValue;//TODO comment this line :)
+        cost += NumberOfPossiblilities - newNumberOfPossiblilities;
+        NumberOfPossiblilities = newNumberOfPossiblilities;
+        return cost + heuristicValue;
     }
 
     private void setPossibilitiesBasedOnTemplate() {
