@@ -209,7 +209,7 @@ public class Board {
                 }
             }
         }
-        heuristicValue = newNumberOfPossiblilities - heuristicValue;//TODO comment this line :)
+        //heuristicValue = newNumberOfPossiblilities - heuristicValue;//TODO comment this line :)
         cost += NumberOfPossiblilities - newNumberOfPossiblilities;
         NumberOfPossiblilities = newNumberOfPossiblilities;
         return cost + heuristicValue;
