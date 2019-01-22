@@ -7,13 +7,13 @@ public class History {
     private int pointInHistory;
 
     History(int width, int height) {
-        history = new int[2 * (width - 1) * (height - 1)];
+        history = new int[4 * (width - 1) * (height - 1)];
         pointInHistory = 0;
 
     }
 
     History(int width, int height, int[] oldHistory, int oldPointInHistory) {
-        history = new int[2 * (width - 1) * (height - 1)];
+        history = new int[4 * (width - 1) * (height - 1)];
         history = oldHistory.clone();
         pointInHistory = oldPointInHistory;
 
@@ -22,6 +22,12 @@ public class History {
     void add(int x, int y) {
         history[pointInHistory] = x;
         history[pointInHistory + 1] = y;
+        pointInHistory += 2;
+    }
+
+    void addBreak() {
+        history[pointInHistory] = -1;
+        history[pointInHistory + 1] = -1;
         pointInHistory += 2;
     }
 

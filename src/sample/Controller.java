@@ -142,7 +142,20 @@ public class Controller {
             return;
 
         Solver solver = new Solver(originalBoard, 0);
-        board = solver.solve();
+        Board solvedBoard = solver.solve();
+        int[] history = solvedBoard.getHistoryAsArray();
+        for (int i = 0; i != history.length; i += 2) {
+            if (history[i] == 0)
+                break;
+            if (history[i] != -1)
+                board.setField(history[i], history[i + 1], solvedBoard.getGameBoard()[history[i]][history[i + 1]].getWritable().getValue(), false);
+            else {
+                fillGridBoard(true);
+                long start = System.nanoTime();
+                while (System.nanoTime() < start + 1000000000) ;
+            }
+        }
+
         fillGridBoard(true);
         setGreenOutput("Kakuro auto solved");
     }

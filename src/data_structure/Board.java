@@ -40,6 +40,7 @@ public class Board {
                     NumberOfPossiblilities += i.getPossibilitiesCount();
             }
         }
+        history.addBreak();
     }
 
     public Board(Board oldBoard) {
@@ -51,12 +52,17 @@ public class Board {
         cost = oldBoard.cost;
     }
 
-    public void setField(int x, int y, int value) {
-        gameBoard[x][y].getWritable().setValue(value);
-        changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
-        changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
-        updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
-        history.add(x, y);
+    public void setField(int x, int y, int value, boolean updateOther) {
+        if (updateOther) {
+            gameBoard[x][y].getWritable().setValue(value);
+            changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
+            changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
+            updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
+            history.add(x, y);
+            history.addBreak();
+        } else {
+            gameBoard[x][y].getWritable().setValue(value);
+        }
     }
 
     private void fillGameBoard(Field2D[][] initialBoard) {
@@ -173,7 +179,7 @@ public class Board {
                         for (int k = 0; k < 9; ++k) {
                             if (possibilities[k] == true) {
                                 temp = new Board(this);
-                                temp.setField(j, i, k + 1);
+                                temp.setField(j, i, k + 1, true);
                                 int checkIfSolved = temp.checkIfSolved();
                                 if (checkIfSolved != IMPOSSIBLETOSOLVE) {
                                     String newShortcut = temp.generateShortcut();
@@ -209,7 +215,6 @@ public class Board {
                 }
             }
         }
-        //heuristicValue = newNumberOfPossiblilities - heuristicValue;//TODO comment this line :)
         cost += NumberOfPossiblilities - newNumberOfPossiblilities;
         NumberOfPossiblilities = newNumberOfPossiblilities;
         return cost + heuristicValue;
@@ -283,12 +288,21 @@ public class Board {
     public String getHistory() {
         StringBuilder builder = new StringBuilder();
         builder.append("Historia\ndługość historii: ").append(history.getPointInHistory() / 2).append("\n");
+        System.out.println(history.getPointInHistory() / 2);
         for (int i = 0; i != history.getPointInHistory() / 2; ++i) {
 //            builder.append(history[i]).append(" ").append(history[i+1]).append("\n");
             Pair<Integer, Integer> pair = history.getValue(i);
-            builder.append("x: ").append(pair.getKey()).append(" y: ").append(pair.getValue()).append(" wartość: ").append(gameBoard[pair.getKey()][pair.getValue()].getWritable().getValue()).append("\n");
+            builder.append("x: ").append(pair.getKey()).append(" y: ").append(pair.getValue());
+            if (pair.getKey() != -1)
+                builder.append(" wartość: ").append(gameBoard[pair.getKey()][pair.getValue()].getWritable().getValue()).append("\n");
+            else
+                builder.append("\n");
         }
         return builder.toString();
+    }
+
+    public int[] getHistoryAsArray() {
+        return history.getHistory();
     }
 
     public byte getHeight() {
