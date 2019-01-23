@@ -156,12 +156,12 @@ public class Controller {
             if (history[i] == 0)
                 break;
             int x = history[i];
-            int y = history[i+1];
-            if (history[i] != -1){
-                timer.schedule(wrap(() -> gridFields.get(x).get(y).setText(Integer.toString(solvedBoard.getGameBoard()[x][y].getWritable().getValue()))),  500 * s++);
+            int y = history[i + 1];
+            if (history[i] != -1) {
+                timer.schedule(wrap(() -> gridFields.get(x).get(y).setText(Integer.toString(solvedBoard.getGameBoard()[x][y].getWritable().getValue()))), 500 * s++);
 //              board.setField(history[i], history[i + 1], solvedBoard.getGameBoard()[history[i]][history[i + 1]].getWritable().getValue(), false);
-            }
-            else {
+            } else {
+                s += 2;//now you can see steps :)
 //                fillGridBoard(true);
 //                long start = System.nanoTime();
 //                while (System.nanoTime() < start + 1000000000) ;
