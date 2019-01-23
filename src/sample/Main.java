@@ -17,120 +17,38 @@ import java.util.Vector;
 
 public class Main extends Application {
 
-//    public static void main(String[] args) {
-////        BoardGenerator i = new BoardGenerator(7);
-//
-//        String inputFile = null;
-//        String outputFile = null;
-//
-//        if (args.length >= 1)
-//            inputFile = args[0];
-//        if (args.length == 2)
-//            outputFile = args[1];
-//
-//        DataInput di = new DataInput();
-////        di.readString(i.toString());
-//        if (inputFile != null)
-//            di.ReadBoard(inputFile);
-//
-//        Board template = di.makeGameBoard();
-//        if (template != null) {
-////            System.out.println("main:\n" + template.toString());
-//            Solver solver = new Solver(template, 0); // TODO compute initial value
-//            long start = System.nanoTime();
-//            Board result = solver.solve();
-//            long end = System.nanoTime();
-//            System.out.println("time: " + (double) (end - start) / 1000000000);
-//
-//            if (outputFile != null)
-//                writeResultToFile(result, outputFile);
-//
-//            System.exit(0);
-//        }
-//
-//        launch(args);
-//    }
-
     public static void main(String[] args) {
-        final boolean isTest = true; // if test - set true, if check your heuristic function- set false
+//        Use arguments [inputfile] [outputfile] to use from console
+//        BoardGenerator i = new BoardGenerator(7);
 
-        Vector<String> inputFiles = new Vector<>();
-        inputFiles.add("examples/board_4x4.in");
-        inputFiles.add("examples/board_4x4_2.in");
-        inputFiles.add("examples/board_4x4_3.in");
-        inputFiles.add("examples/board_4x4_4.in");
-        inputFiles.add("examples/board_4x4_gen.in");
-        inputFiles.add("examples/board_6x6.in");
-
-        for (int size = 6; size < 7; ++size)
-        {
-            for (int i = 0; i < 20; i++){
-                String name = String.format("examples/board_%d_%d.in", size-1, i);
-                BoardGenerator bg = new BoardGenerator(size);
-                try {
-                    FileWriter fileWriter = new FileWriter(name);
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
-                    printWriter.println(bg.toString());
-                    printWriter.close();
-                    inputFiles.add(name);
-                } catch (IOException e) {
-                    System.out.println("Error on save to file");
-                }
-            }
-        }
-
-//        inputFiles.add("examples/board_9x8_1");
-//        inputFiles.add("examples/board_13x13_1");
         String inputFile = null;
+        String outputFile = null;
 
-        Vector<Double> results = new Vector<>();
-        Vector<Long> analysed = new Vector<>();
-        double summary = 0;
+        if (args.length >= 1)
+            inputFile = args[0];
+        if (args.length == 2)
+            outputFile = args[1];
 
-        int testCount;
-        if(isTest)
-            testCount = 15;
-        else
-            testCount = 1;
+        DataInput di = new DataInput();
+//        di.readString(i.toString());
+        if (inputFile != null)
+            di.ReadBoard(inputFile);
 
-        for (int i = 0 ; i < inputFiles.size(); ++i){
-            inputFile = inputFiles.elementAt(i);
-            try {
-                long analysedAll = 0;
-                long analyzedRandom = 0;
-                for (int j = 0 ; j < testCount; ++j){
-                    DataInput di = new DataInput();
+        Board template = di.makeGameBoard();
+        if (template != null) {
+            Solver solver = new Solver(template, 0);
+            long start = System.nanoTime();
+            Board result = solver.solve();
+            long end = System.nanoTime();
+            System.out.println("time: " + (double) (end - start) / 1000000000);
 
-                    if (inputFile != null)
-                        di.ReadBoard(inputFile);
-                    Board template = di.makeGameBoard();
-                    if (template != null){
-                        Solver solver = new Solver(template, 0); // TODO compute initial value
-                        Solver randomSolve = new Solver(template, 0);
-                        if(isTest)
-                        {
-                            solver.solve();
-                            randomSolve.radndomSolve();
-                        }
-                        else
-                            solver.solve();
-                        analysedAll += solver.getAnalysedCount();
-                        analyzedRandom += randomSolve.getAnalysedCount();
-                    }
-                }
-                analysed.add(analysedAll/testCount);
-                System.out.println(String.format("%s : %d (random) vs. %d (heuristic)",
-                        inputFile, analyzedRandom / testCount, analysedAll / testCount));
-            } catch (Exception e)
-            {
-                System.out.println(String.format("%s ignored", inputFile));
-            }
+            if (outputFile != null)
+                writeResultToFile(result, outputFile);
+
+            System.exit(0);
         }
 
-        System.out.println("Results: ");
-        for(int i = 0; i < inputFiles.size(); ++i){
-            System.out.println(analysed.elementAt(i));
-        }
+        launch(args);
     }
 
     private static void writeResultToFile(Board resultBoard, String outputFile) {
