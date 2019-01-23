@@ -16,6 +16,7 @@ public class Solver {
     };
 
     private PriorityQueue<GameState> queue = new PriorityQueue<>(comparator);
+    private Vector<GameState> analysedVector = new Vector<>(); // for randomSolve
     private Board template;
     private Integer analysedCount;
     HashSet<String> mapsAddedToQueue;
@@ -23,10 +24,11 @@ public class Solver {
     public Solver(Board board, int initialValue) {
         template = new Board(board);
         GameState initial = new GameState(template.generateShortcut(), initialValue, false, template);
-//        System.out.println(template.generateShortcut());
         queue.add(initial);
         mapsAddedToQueue = new HashSet<>();
         mapsAddedToQueue.add(template.generateShortcut());
+
+        analysedVector.add(initial); // for randomSolve;
     }
 
     public Integer getAnalysedCount() {
@@ -63,6 +65,38 @@ public class Solver {
             }
         }
         System.out.println("Analyzed board: " + countOfAnalyzed);
+
+        return analyzedBoard;
+    }
+
+    public Board radndomSolve() {
+        GameState analyzed;
+        Board analyzedBoard = null;
+        int countOfAnalyzed = 0;
+
+        while (!analysedVector.isEmpty()) {
+            Random rand = new Random();
+            int nextBoard = rand.nextInt(analysedVector.size());
+            analyzed = analysedVector.elementAt(nextBoard);
+            analyzedBoard = analyzed.getBoard();
+            Collections.swap(analysedVector, nextBoard, (analysedVector.size()-1));
+            analysedVector.remove(analysedVector.size()-1);
+
+            ++countOfAnalyzed;
+            if (analyzed.isSolved()) {
+                analysedCount = countOfAnalyzed;
+                break;
+            }
+
+            Vector<GameState> newGeneratedStates = analyzedBoard.nextStep();
+            for (GameState gameState : newGeneratedStates) {
+                if (!mapsAddedToQueue.contains(gameState.getBoardShortcut())) {
+                    analysedVector.add(gameState);
+                    mapsAddedToQueue.add(gameState.getBoardShortcut());
+                }
+            }
+        }
+//        System.out.println("Analyzed board: " + countOfAnalyzed);
 
         return analyzedBoard;
     }

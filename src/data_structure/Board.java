@@ -114,16 +114,6 @@ public class Board {
                 }
         }
 
-//        for (FieldInfo fieldInfo: columnsInfo){
-//            for (FieldWritable fieldWritable : fieldInfo.getFields()){
-//                if(fieldWritable.getState() == FieldWritable.State.FILLED)
-//                    shortcut.append(fieldWritable.getValue());
-//                else
-//                    shortcut.append(0);
-//            }
-//        }
-
-
         return shortcut.toString();
     }
 
@@ -209,7 +199,7 @@ public class Board {
             }
         }
 
-        cost += (NumberOfPossiblilities - newNumberOfPossiblilities) * (NumberOfPossiblilities - newNumberOfPossiblilities);
+        cost += NumberOfPossiblilities - newNumberOfPossiblilities;
         NumberOfPossiblilities = newNumberOfPossiblilities;
         return cost + heuristicValue;
     }

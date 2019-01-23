@@ -52,6 +52,8 @@ public class Main extends Application {
 //    }
 
     public static void main(String[] args) {
+        final boolean isTest = true; // if test - set true, if check your heuristic function- set false
+
         Vector<String> inputFiles = new Vector<>();
         inputFiles.add("examples/board_4x4.in");
         inputFiles.add("examples/board_4x4_2.in");
@@ -62,25 +64,36 @@ public class Main extends Application {
         String inputFile = null;
 
         Vector<Double> results = new Vector<>();
-        Vector<Integer> analysed = new Vector<>();
+        Vector<Long> analysed = new Vector<>();
         double summary = 0;
 
-        for (int i = 0 ; i < inputFiles.size(); ++i){
-            DataInput di = new DataInput();
-            inputFile = inputFiles.elementAt(i);
+        int testCount;
+        if(isTest)
+            testCount = 50;
+        else
+            testCount = 1;
 
-            if (inputFile != null)
-                di.ReadBoard(inputFile);
-            Board template = di.makeGameBoard();
-            if (template != null){
-                long analysedBoards = 0;
-                Solver solver = new Solver(template, 0); // TODO compute initial value
-                solver.solve();
-                analysed.add(solver.getAnalysedCount());
+        for (int i = 0 ; i < inputFiles.size(); ++i){
+            long analysedAll = 0;
+            for (int j = 0 ; j < testCount; ++j){
+                DataInput di = new DataInput();
+                inputFile = inputFiles.elementAt(i);
+
+                if (inputFile != null)
+                    di.ReadBoard(inputFile);
+                Board template = di.makeGameBoard();
+                if (template != null){
+                    Solver solver = new Solver(template, 0); // TODO compute initial value
+                    if(isTest)
+                        solver.radndomSolve();
+                    else
+                        solver.solve();
+                    analysedAll += solver.getAnalysedCount();
+                }
+                analysed.add(analysedAll/testCount);
             }
         }
 
-        System.out.println();
         System.out.println("Results: ");
         for(int i = 0; i < inputFiles.size(); ++i){
             System.out.println(analysed.elementAt(i));
