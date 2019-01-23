@@ -199,7 +199,7 @@ public class Board {
             }
         }
 
-        cost += NumberOfPossiblilities - newNumberOfPossiblilities;
+        cost += Math.pow((NumberOfPossiblilities - newNumberOfPossiblilities), 4);
         NumberOfPossiblilities = newNumberOfPossiblilities;
         return cost + heuristicValue;
     }
