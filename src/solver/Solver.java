@@ -17,6 +17,7 @@ public class Solver {
 
     private PriorityQueue<GameState> queue = new PriorityQueue<>(comparator);
     private Board template;
+    private Integer analysedCount;
     HashSet<String> mapsAddedToQueue;
 
     public Solver(Board board, int initialValue) {
@@ -28,6 +29,9 @@ public class Solver {
         mapsAddedToQueue.add(template.generateShortcut());
     }
 
+    public Integer getAnalysedCount() {
+        return analysedCount;
+    }
 
     public Board solve() {
         GameState analyzed;
@@ -39,9 +43,10 @@ public class Solver {
             analyzed = queue.remove();
             analyzedBoard = analyzed.getBoard();
             if (analyzed.isSolved()) {
-                System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
-                System.out.println(analyzedBoard);
-                System.out.println(analyzedBoard.getHistory());
+//                System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
+//                System.out.println(analyzedBoard);
+//                System.out.println(analyzedBoard.getHistory());
+                analysedCount = countOfAnalyzed;
                 break;
             }
 
