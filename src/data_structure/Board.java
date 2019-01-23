@@ -57,8 +57,8 @@ public class Board {
             gameBoard[x][y].getWritable().setValue(value);
             changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
             changedInfo.add(gameBoard[x][y].getWritable().getRowFieldInfo());
-            updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
             history.add(x, y);
+            updatePossibilitiesByFilledFields(gameBoard[x][y].getWritable());
             history.addBreak();
         } else {
             gameBoard[x][y].getWritable().setValue(value);
@@ -202,20 +202,14 @@ public class Board {
         int newNumberOfPossiblilities = 0;
         for (FieldInfo j : columnsInfo) {
             for (FieldWritable i : j.getFields()) {
-                if (i.getState() == FieldWritable.State.UNFILLED)
+                if (i.getState() == FieldWritable.State.UNFILLED){
                     newNumberOfPossiblilities += i.getPossibilitiesCount();
-            }
-        }
-
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                if (gameBoard[j][i].getType() == Field2D.Type.WRITABLE && gameBoard[j][i].getWritable().getState() == FieldWritable.State.UNFILLED) {
-                    //heuristicValue += gameBoard[j][i].getWritable().getPossibilitiesCount(); USE THIS TO CHECK HOW CONSTANT SUM WORK
-                    heuristicValue++;
+                    ++heuristicValue;
                 }
             }
         }
-        cost += NumberOfPossiblilities - newNumberOfPossiblilities;
+
+        cost += (NumberOfPossiblilities - newNumberOfPossiblilities) * (NumberOfPossiblilities - newNumberOfPossiblilities);
         NumberOfPossiblilities = newNumberOfPossiblilities;
         return cost + heuristicValue;
     }
