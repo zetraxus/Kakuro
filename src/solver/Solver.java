@@ -95,6 +95,9 @@ public class Solver {
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
+            if (countOfAnalyzed % 10000 == 0) {
+                System.out.println(countOfAnalyzed + " " + queue.size());
+            }
         }
 //        System.out.println("Analyzed board: " + countOfAnalyzed);
 

@@ -52,7 +52,7 @@ public class Main extends Application {
 //    }
 
     public static void main(String[] args) {
-        final boolean isTest = false; // if test - set true, if check your heuristic function- set false
+        final boolean isTest = true; // if test - set true, if check your heuristic function- set false
 
         Vector<String> inputFiles = new Vector<>();
         inputFiles.add("examples/board_4x4.in");
@@ -60,7 +60,7 @@ public class Main extends Application {
         inputFiles.add("examples/board_4x4_3.in");
         inputFiles.add("examples/board_4x4_4.in");
         inputFiles.add("examples/board_4x4_gen.in");
-
+//        inputFiles.add("examples/board_6x6.in");
         String inputFile = null;
 
         Vector<Double> results = new Vector<>();
@@ -69,7 +69,7 @@ public class Main extends Application {
 
         int testCount;
         if(isTest)
-            testCount = 50;
+            testCount = 15;
         else
             testCount = 1;
 
