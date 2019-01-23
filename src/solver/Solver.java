@@ -40,14 +40,11 @@ public class Solver {
         Board analyzedBoard = null;
         int countOfAnalyzed = 0;
 
-        while (queue.isEmpty() == false) {
+        while (!queue.isEmpty()) {
             ++countOfAnalyzed;
             analyzed = queue.remove();
             analyzedBoard = analyzed.getBoard();
             if (analyzed.isSolved()) {
-//                System.out.println("" + analyzed.isSolved() + " " + analyzed.getBoardShortcut());
-//                System.out.println(analyzedBoard);
-//                System.out.println(analyzedBoard.getHistory());
                 analysedCount = countOfAnalyzed;
                 break;
             }
@@ -55,16 +52,11 @@ public class Solver {
             Vector<GameState> newGeneratedStates = analyzedBoard.nextStep();
             for (GameState gameState : newGeneratedStates) {
                 if (!mapsAddedToQueue.contains(gameState.getBoardShortcut())) {
-//                    System.out.println(gameState.getBoard().toString());
                     queue.add(gameState);
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
-            if (countOfAnalyzed % 1000 == 0) {
-                System.out.println(countOfAnalyzed + " " + queue.size());
-            }
         }
-        System.out.println("Analyzed board: " + countOfAnalyzed);
 
         return analyzedBoard;
     }
@@ -95,11 +87,7 @@ public class Solver {
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
-            if (countOfAnalyzed % 10000 == 0) {
-                System.out.println(countOfAnalyzed + " " + queue.size());
-            }
         }
-//        System.out.println("Analyzed board: " + countOfAnalyzed);
 
         return analyzedBoard;
     }

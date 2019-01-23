@@ -62,7 +62,6 @@ public class PossiblesSumCombinations {
             }
             br.close();
 
-            //seting poss
             List<int[]> combinations;
             poss = new boolean[9][45][];
             for (int i = 0; i != 9; ++i) {

@@ -31,7 +31,7 @@ public class FieldWritable {
     }
 
     public void revokePossibility(int i) {
-        if (i >= 1 && i <= 9 && possibilities[i - 1] == true) {
+        if (i >= 1 && i <= 9 && possibilities[i - 1]) {
             possibilities[i - 1] = false;
             possibilitiesCount--;
         }
@@ -59,7 +59,7 @@ public class FieldWritable {
 
     private void updateStoredValue() {
         for (int j = 0; j < 9; ++j) {
-            if (possibilities[j] == true) {
+            if (possibilities[j]) {
                 storedValue = j + 1;
             }
         }
@@ -77,7 +77,7 @@ public class FieldWritable {
                 possibilitiesCount++;
         }
         if (possibilitiesCount == 1) state = State.FILLED;
-        if (possibilitiesCount == 0) state = State.UNFILLED;//TODO error
+        if (possibilitiesCount == 0) state = State.UNFILLED;
         storedValue = -1;
     }
 

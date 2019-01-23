@@ -33,7 +33,7 @@ public class Field2D { // we need that class to gather information about rows an
         return column;
     }
 
-    public void setColumn(FieldInfo column) { // TODO: (kam193) Maybe we should raise exception, when operation is not permitted
+    public void setColumn(FieldInfo column) {
         this.column = column;
         if (this.type == Type.BLANK)
             this.type = Type.INFOCOLUMN;

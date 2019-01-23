@@ -11,7 +11,6 @@ public class Board {
     private final int SOLVED = 1;
     private final int POSSIBLETOSOLVE = 0;
     private final int IMPOSSIBLETOSOLVE = -1;
-    private final int ASCIZEROCODE = 48;
     private byte width;
     private byte height;
     private History history;
@@ -52,7 +51,7 @@ public class Board {
         cost = oldBoard.cost;
     }
 
-    public void setField(int x, int y, int value, boolean updateOther) {
+    private void setField(int x, int y, int value, boolean updateOther) {
         if (updateOther) {
             gameBoard[x][y].getWritable().setValue(value);
             changedInfo.add(gameBoard[x][y].getWritable().getColumnFieldInfo());
@@ -158,7 +157,6 @@ public class Board {
     public Vector<GameState> nextStep() {
         Vector<GameState> newStates = new Vector<>();
 
-        StringBuilder shortcut = new StringBuilder(this.generateShortcut());
         Board temp;
 
         for (int i = 0; i < height; ++i) {
@@ -167,7 +165,7 @@ public class Board {
                     if (gameBoard[j][i].getWritable().getState() == FieldWritable.State.UNFILLED) {
                         boolean[] possibilities = gameBoard[j][i].getWritable().getPossibilities();
                         for (int k = 0; k < 9; ++k) {
-                            if (possibilities[k] == true) {
+                            if (possibilities[k]) {
                                 temp = new Board(this);
                                 temp.setField(j, i, k + 1, true);
                                 int checkIfSolved = temp.checkIfSolved();
@@ -274,7 +272,6 @@ public class Board {
         builder.append("Historia\ndługość historii: ").append(history.getPointInHistory() / 2).append("\n");
         System.out.println(history.getPointInHistory() / 2);
         for (int i = 0; i != history.getPointInHistory() / 2; ++i) {
-//            builder.append(history[i]).append(" ").append(history[i+1]).append("\n");
             Pair<Integer, Integer> pair = history.getValue(i);
             builder.append("x: ").append(pair.getKey()).append(" y: ").append(pair.getValue());
             if (pair.getKey() != -1)
