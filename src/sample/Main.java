@@ -90,8 +90,8 @@ public class Main extends Application {
                         solver.solve();
                     analysedAll += solver.getAnalysedCount();
                 }
-                analysed.add(analysedAll/testCount);
             }
+            analysed.add(analysedAll/testCount);
         }
 
         System.out.println("Results: ");
