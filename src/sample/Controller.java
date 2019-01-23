@@ -149,29 +149,37 @@ public class Controller {
             return;
 
         Solver solver = new Solver(originalBoard, 0);
-        Board solvedBoard = solver.solve();
-        int[] history = solvedBoard.getHistoryAsArray();
-        int s = 0;
-        for (int i = 0; i != history.length; i += 2) {
-            if (history[i] == 0)
-                break;
-            int x = history[i];
-            int y = history[i + 1];
-            if (history[i] != -1) {
-                timer.schedule(wrap(() -> gridFields.get(x).get(y).setText(Integer.toString(solvedBoard.getGameBoard()[x][y].getWritable().getValue()))), 500 * s++);
+        try {
+            Board solvedBoard = solver.solve();
+
+
+            int[] history = solvedBoard.getHistoryAsArray();
+            int s = 0;
+            for (int i = 0; i != history.length; i += 2) {
+                if (history[i] == 0)
+                    break;
+                int x = history[i];
+                int y = history[i + 1];
+                if (history[i] != -1) {
+                    timer.schedule(wrap(() -> gridFields.get(x).get(y).setText(Integer.toString(solvedBoard.getGameBoard()[x][y].getWritable().getValue()))), 500 * s++);
 //              board.setField(history[i], history[i + 1], solvedBoard.getGameBoard()[history[i]][history[i + 1]].getWritable().getValue(), false);
-            } else {
-                s += 2;//now you can see steps :)
+                } else {
+                    s += 2;//now you can see steps :)
 //                fillGridBoard(true);
 //                long start = System.nanoTime();
 //                while (System.nanoTime() < start + 1000000000) ;
 //                try {
 //                    TimeUnit.SECONDS.sleep(1);
 //                } catch (Exception e) {}
+                }
             }
-        }
 //        fillGridBoard(true);
-        setGreenOutput("Kakuro auto solved");
+            setGreenOutput("Kakuro auto solved");
+        }
+        catch (Exception e)
+        {
+            setRedOutput("Error on solving");
+        }
     }
 
     @FXML

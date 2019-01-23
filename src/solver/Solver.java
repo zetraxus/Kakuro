@@ -35,7 +35,7 @@ public class Solver {
         return analysedCount;
     }
 
-    public Board solve() {
+    public Board solve() throws Exception {
         GameState analyzed;
         Board analyzedBoard = null;
         int countOfAnalyzed = 0;
@@ -60,16 +60,20 @@ public class Solver {
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
-            if (countOfAnalyzed % 1000 == 0) {
+            if (countOfAnalyzed > 35000 || queue.size() > 800000) {
                 System.out.println(countOfAnalyzed + " " + queue.size());
+                throw new Exception("Too many boards");
             }
+//            if (countOfAnalyzed % 1000 == 0) {
+//                System.out.println(countOfAnalyzed + " " + queue.size());
+//            }
         }
-        System.out.println("Analyzed board: " + countOfAnalyzed);
+//        System.out.println("Analyzed board: " + countOfAnalyzed);
 
         return analyzedBoard;
     }
 
-    public Board radndomSolve() {
+    public Board radndomSolve() throws Exception {
         GameState analyzed;
         Board analyzedBoard = null;
         int countOfAnalyzed = 0;
@@ -95,8 +99,9 @@ public class Solver {
                     mapsAddedToQueue.add(gameState.getBoardShortcut());
                 }
             }
-            if (countOfAnalyzed % 10000 == 0) {
+            if (countOfAnalyzed > 35000 || queue.size() > 800000) {
                 System.out.println(countOfAnalyzed + " " + queue.size());
+                throw new Exception("Too many boards");
             }
         }
 //        System.out.println("Analyzed board: " + countOfAnalyzed);
